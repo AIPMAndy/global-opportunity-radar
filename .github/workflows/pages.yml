@@ -1,23 +1,28 @@
-name: Refresh Data and Publish Global Opportunity Radar
+name: Build and Publish Global Opportunity Radar
+
 on:
   push:
     branches: [main]
   schedule:
     - cron: '17 */6 * * *'
   workflow_dispatch:
+
 permissions:
   contents: read
   pages: write
   id-token: write
+
 concurrency:
-  group: pages
+  group: global-opportunity-radar-pages
   cancel-in-progress: true
+
 jobs:
   deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,17 +30,31 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Collect open data (without failing on unavailable providers)
+      - name: Prepare offline-first static site
+        run: |
+          mkdir -p _site/data
+          cp index.html styles.css app.js favicon.svg _site/
+          cp data/world.json data/snapshot.json _site/data/
+          touch _site/.nojekyll
+          echo 'Static site staged; deployment does not depend on third-party API availability.'
+      - name: Refresh public-data snapshot (best effort)
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENALEX_API_KEY: ${{ secrets.OPENALEX_API_KEY }}
-        run: python scripts/collect.py
-      - name: Configure Pages
+        run: |
+          if timeout 110s python scripts/collect.py; then
+            cp data/snapshot.json _site/data/snapshot.json
+            echo 'Snapshot refreshed.'
+          else
+            echo 'Public data temporarily unavailable; deploying the usable offline-first site with a transparent empty snapshot.'
+          fi
+      - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
-      - name: Upload static site
+      - name: Upload only the built site
         uses: actions/upload-pages-artifact@v4
         with:
-          path: .
+          path: _site
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
