@@ -38,11 +38,20 @@ jobs:
           python -m unittest discover -s tests -v
           python -c "import json; assert len(json.load(open('data/world.json'))) > 100"
           test -f index.html && test -f styles.css && test -f favicon.svg
+      - name: Restore latest successful data (best effort)
+        uses: actions/cache/restore@v4
+        continue-on-error: true
+        with:
+          path: data/last-success.json
+          key: global-radar-snapshot-${{ github.run_id }}
+          restore-keys: |
+            global-radar-snapshot-
       - name: Prepare offline-first static site
         run: |
           mkdir -p _site/data
           cp index.html styles.css app.js explorer.css explorer.js favicon.svg _site/
           cp data/world.json data/snapshot.json _site/data/
+          if test -s data/last-success.json; then cp data/last-success.json _site/data/snapshot.json; fi
           touch _site/.nojekyll
           echo 'Static site staged; deployment does not depend on third-party API availability.'
       - name: Refresh public-data snapshot (best effort)
@@ -53,10 +62,18 @@ jobs:
         run: |
           if timeout 110s python scripts/collect.py; then
             cp data/snapshot.json _site/data/snapshot.json
-            echo 'Snapshot refreshed.'
+            cp data/snapshot.json data/last-success.json
+            echo 'Snapshot refreshed and cached.'
           else
             echo 'Public data temporarily unavailable; deploying the usable offline-first site with a transparent empty snapshot.'
           fi
+      - name: Save data cache for the next run
+        uses: actions/cache/save@v4
+        if: hashFiles('data/last-success.json') != ''
+        continue-on-error: true
+        with:
+          path: data/last-success.json
+          key: global-radar-snapshot-${{ github.run_id }}
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
       - name: Upload only the built site
