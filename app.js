@@ -159,7 +159,7 @@ class CanvasGlobe {
   requestAnimationFrame(now=>this.loop(now))
  }
 }
-let globe;
+let globe,heroGlobe;
 function metricEntry(code,key){const value=snapshot?.metrics?.[code]?.[key];return value&&value.value!==null?value:null}
 function showMetrics(code){
  let found=0;for(const key of Object.keys(LABELS)){const d=metricEntry(code,key);if(d)found++;$( "metric-"+key).textContent=d?format(d.value,key==="income"?"":"%"):"—";$( "year-"+key).textContent=d?String(d.year)+" 年":"暂无统计"}
@@ -171,7 +171,7 @@ function selectCountry(code,scroll){
  selected=c;$("place-region").textContent=c[3];$("place-title").textContent=c[1];$("place-english").textContent=c[2];$("place-question").textContent=c[6];$("country-search").value=c[1];
  $("worldbank-link").href="https://api.worldbank.org/v2/country/"+c[0]+"/indicator/NY.GDP.MKTP.KD.ZG?format=json";
  document.querySelectorAll("[data-country]").forEach(b=>b.classList.toggle("active",b.dataset.country===code));
- showMetrics(code);if(globe)globe.lookAt(c);renderComparison();
+ showMetrics(code);if(globe)globe.lookAt(c);if(heroGlobe)heroGlobe.lookAt(c);renderComparison();
  if(scroll)document.querySelector("#globe-section").scrollIntoView({behavior:"smooth",block:"start"});
  if(!snapshot||!Object.keys(snapshot.metrics?.[code]||{}).length)loadCountryOnDemand(code);
 }
@@ -228,9 +228,10 @@ async function fallbackSignals(){
 }
 async function start(){
  globe=new CanvasGlobe($("earth"),code=>selectCountry(code,false));
+ heroGlobe=new CanvasGlobe($("hero-earth"),code=>selectCountry(code,true));
  $("earth-status").textContent="离线地球 · 本地渲染";
  // Real Natural Earth coastlines are bundled as a small file. The in-script shapes remain a fallback.
- getJSON("data/world.json",7000).then(data=>{if(Array.isArray(data)&&data.length){globe.paths=data;globe.draw()}}).catch(()=>{});
+ getJSON("data/world.json",7000).then(data=>{if(Array.isArray(data)&&data.length){globe.paths=data;globe.draw();heroGlobe.paths=data;heroGlobe.draw()}}).catch(()=>{});
  $("country-list").innerHTML=C.map(c=>'<option value="'+escapeHTML(c[1])+'"></option><option value="'+escapeHTML(c[2])+'"></option>').join("");
  document.querySelectorAll("[data-country]").forEach(el=>el.addEventListener("click",()=>selectCountry(el.dataset.country,el.classList.contains("region-card"))));
  $("reset-earth").addEventListener("click",()=>globe.reset());
