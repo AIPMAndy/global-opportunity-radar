@@ -8,16 +8,16 @@
 
 **GitHub Pages（配置成功后）：** https://aipmandy.github.io/global-opportunity-radar/
 
-> 当前在线仓库版本：**V1 核心交互版**。已提交可运行的单页 3D 地球网站和 GitHub Pages 自动部署工作流；此仓库目前还没有包含完整 Python 定时采集后端。请勿把自动部署网站误认为后台定时更新经济数据。
+> 当前在线仓库版本：**V1 核心交互版**。已提交可运行的单页 3D 地球网站和 GitHub Pages 自动部署工作流；已增加 Python 标准库采集器与每六小时定时重新构建；网页优先尝试公开接口，接口失败时使用最近成功采集的缓存指标。数据抓取频率不等于宏观指标发布频率。
 
 ### 已支持
 
 - 25 个重点经济体的三维地球定位、拖动、缩放、点击交互；3D 资源不可达时可用地区按钮。
 - 按经济体查询世界银行公开指标：GDP 增长率、通胀、失业、FDI 净流入、人均 GDP。
-- 打开网页时查询 GitHub 近 30 日新增 AI agents 仓库、Hacker News 近期 Show HN 中包含 AI 的投稿。
+- 打开网页时查询 GitHub 近 30 日新增 AI agents 仓库、Hacker News 近期 Show HN 中包含 AI 的投稿。\n- GitHub Actions 每六小时尝试采集世界银行、GitHub、Hacker News 和 OpenAlex 关键词数据，生成部署用 JSON 快照；部分来源失败时保留空值和失败记录。
 - 每项宏观指标展示统计年份；接口失败或没有数据时显示空值，不编造实时数值。
 - 苹果风浅色界面、移动端布局、源站跳转。
-- GitHub Actions 自动**发布网站**：每次向 main 推送后重新发布页面。
+- GitHub Actions 自动**更新数据并发布网站**：每次向 main 推送及每六小时定时尝试运行。
 
 ### 暂不包含
 
@@ -37,10 +37,10 @@
 
 - 前端：静态 HTML / CSS / JavaScript，无 npm 安装要求。
 - 地球：globe.gl，通过 jsDelivr 加载。贴图通过第三方地址加载；离线或 CDN 不可用时保留地区和数据面板。
-- 数据：世界银行 WDI、GitHub REST 搜索、Hacker News Algolia。
+- 数据：世界银行 WDI、GitHub REST 搜索、Hacker News Algolia、OpenAlex 关键词检索。\n- 自动采集：Python 标准库脚本 \`scripts/collect.py\`；定时任务 UTC 每六小时第 17 分钟运行；生成 \`data/snapshot.json\`，只打包到 Pages 部署产物（不自动提交到 main）。
 - 托管：GitHub Pages；工作流位于 `.github/workflows/pages.yml`。
 
-本版在用户浏览器里请求公开接口，受 CORS、网络、接口配额和第三方服务可用性约束。部分网络下可能无法读取数据；切勿将缺失值当成零。
+页面在浏览器中查询公开接口，并使用已部署的数据快照作为回退。接口可能受 CORS、网络、配额限制；OpenAlex 可能要求 API Key，可在仓库的 Actions secrets 中按需设置 \`OPENALEX_API_KEY\`。缺失值不能当成零，缓存数值应结合标注年份理解。
 
 ## 判断创业机会的方法
 
