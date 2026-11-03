@@ -91,7 +91,7 @@
     setText("ex-market-income",format(income?.value,"income"));
     setText("ex-market-question",c.question||"哪些客户愿意为新的解决方案持续付费？");
     const link=byId("ex-market-source");
-    if(link)link.href="https://data.worldbank.org/country/"+encodeURIComponent(c.code.toLowerCase());
+    if(link)link.href="https://api.worldbank.org/v2/country/"+encodeURIComponent(c.code)+"/indicator/NY.GDP.MKTP.KD.ZG?format=json";
   }
   function renderLegend(){
     const el=byId("ex-legend");if(!el)return;el.replaceChildren();
@@ -159,7 +159,7 @@
     const rows=[headers];
     for(const c of countries){for(const [key,def] of Object.entries(METRICS)){
       const d=datum(c.code,key);
-      rows.push([c.code,c.name,c.region,def.name,numeric(d?.value)?d.value:"",key==="income"?"USD":"%",d?.year||"", "https://data.worldbank.org/indicator/"+def.code+"?locations="+c.code]);
+      rows.push([c.code,c.name,c.region,def.name,numeric(d?.value)?d.value:"",key==="income"?"USD":"%",d?.year||"", "https://api.worldbank.org/v2/country/"+c.code+"/indicator/"+def.code+"?format=json"]);
     }}
     const csv="\uFEFF"+rows.map(row=>row.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
     const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
@@ -180,6 +180,11 @@
     byId("ex-more").addEventListener("click",()=>{showAll=!showAll;renderRanking()});
     byId("ex-add-economy").addEventListener("change",e=>{const c=e.target.value;if(c){if(chosen.size>=5)chosen.delete([...chosen][0]);chosen.add(c);renderTrend()}});
     byId("ex-download").addEventListener("click",downloadCSV);
+    byId("ex-share").addEventListener("click",async()=>{
+      const url=new URL(window.location.href);url.searchParams.set("economy",selected);
+      try{if(!navigator.clipboard?.writeText)throw Error("clipboard unavailable");await navigator.clipboard.writeText(url.toString());setText("ex-share","已复制市场链接 ✓")}
+      catch(_){window.prompt("复制当前市场链接：",url.toString())}
+    });
     window.addEventListener("radar:data",e=>update(e.detail?.snapshot));
     window.addEventListener("radar:select",e=>{selected=e.detail?.code||selected;renderRanking();renderMarket()});
     update({metrics:{}});
