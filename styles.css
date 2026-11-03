@@ -24,3 +24,6 @@
 .hero-planet #hero-earth:active{cursor:grabbing}
 .hero-planet .orbit{pointer-events:none}
 .hero-planet .planet-note,.hero-planet .hero-planet-caption{z-index:2;pointer-events:none}
+
+/* Keep mobile viewport at device width; prevent off-screen hero glow and orbit from forcing horizontal scroll. */
+@media(max-width:860px){.hero::before{right:0;width:100%}.hero-planet{overflow:hidden}}
