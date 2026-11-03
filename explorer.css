@@ -1,0 +1,60 @@
+/* Global Radar: market explorer — Apple's restrained white-space / typography system */
+.explorer-section{padding-top:114px;padding-bottom:110px;overflow:hidden}
+.explorer-section .ex-eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:760;letter-spacing:.17em;color:#3181ea}
+.explorer-section .ex-eyebrow:before{content:"";display:block;width:7px;height:7px;border-radius:50%;background:#3487f6;box-shadow:0 0 0 5px #e9f3ff}
+.explorer-section .ex-hero{display:flex;align-items:end;justify-content:space-between;gap:35px;margin-bottom:33px}
+.explorer-section .ex-hero h2{font-size:clamp(40px,5vw,66px);font-weight:750;line-height:1.13;letter-spacing:-.06em;margin:16px 0 0;color:#101827}
+.explorer-section .ex-hero p{max-width:365px;line-height:1.85;font-size:14px;color:#78869a;margin:0 0 7px}
+.explorer-section .ex-statline{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.explorer-section .ex-stat{background:#f5f8fc;padding:19px 24px;border-radius:17px;border:1px solid #edf1f7}
+.explorer-section .ex-stat span{display:block;font-size:11px;color:#77859b;margin-bottom:8px}
+.explorer-section .ex-stat strong{font-size:25px;letter-spacing:-.055em;font-weight:750;color:#1c2a40}
+.explorer-section .ex-panel{background:white;border:1px solid #e9edf3;border-radius:26px;box-shadow:0 12px 55px rgba(21,47,88,.055);overflow:hidden}
+.explorer-section .ex-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:16px}
+.explorer-section .ex-pane-head{padding:27px 29px 19px}
+.explorer-section .ex-pane-head h3{font-size:23px;font-weight:740;letter-spacing:-.04em;color:#111827;margin:0 0 7px}
+.explorer-section .ex-pane-head p{font-size:12px;color:#8290a2;line-height:1.65;margin:0}
+.explorer-section .ex-controls{display:flex;gap:9px;padding:0 29px 19px;flex-wrap:wrap}
+.explorer-section .ex-controls select,.explorer-section .ex-controls button,.explorer-section .ex-tools button{min-height:39px;border-radius:11px;border:1px solid #e2e8f1;background:#f7f9fc;color:#3f5068;padding:8px 11px;font-size:12px;cursor:pointer}
+.explorer-section .ex-controls button:hover,.explorer-section .ex-tools button:hover{border-color:#88b1f2;color:#236ddd}
+.explorer-section .ex-ranking-head{display:grid;grid-template-columns:28px minmax(88px,1fr) minmax(70px,1.5fr) minmax(80px,.8fr) 44px;gap:10px;padding:9px 26px;color:#9aa8b9;font-size:10px;font-weight:700}
+.explorer-section .ex-ranking{padding:0 14px}
+.explorer-section .ex-rank-row{width:100%;display:grid;align-items:center;grid-template-columns:28px minmax(88px,1fr) minmax(70px,1.5fr) minmax(80px,.8fr) 44px;gap:10px;border:0;border-top:1px solid #f1f3f7;background:transparent;border-radius:7px;text-align:left;padding:12px;color:#2d3a4d;cursor:pointer;transition:background .15s}
+.explorer-section .ex-rank-row:hover,.explorer-section .ex-rank-row:focus-visible{background:#f5f9ff}
+.explorer-section .ex-rank-row.is-selected{background:#edf5ff}
+.explorer-section .ex-rank-n{font-size:11px;color:#9aa7b9}
+.explorer-section .ex-rank-name{font-size:13px;font-weight:680;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.explorer-section .ex-rank-track{height:7px;background:#eaf0f8;border-radius:99px;overflow:hidden}
+.explorer-section .ex-rank-fill{display:block;height:100%;background:linear-gradient(90deg,#85baff,#317df0);border-radius:99px;transition:width .25s}
+.explorer-section .ex-rank-fill.negative{background:linear-gradient(90deg,#fda77e,#eb6c67)}
+.explorer-section .ex-rank-value{font-size:13px;font-weight:720;font-variant-numeric:tabular-nums}
+.explorer-section .ex-rank-year{font-size:11px;color:#97a3b3}
+.explorer-section .ex-pane-foot{padding:17px 28px 25px;display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:11px;color:#91a0ae}
+.explorer-section .ex-pane-foot button{border:0;background:#eef5ff;border-radius:100px;padding:10px 17px;color:#2e72cb;cursor:pointer;font-weight:650}
+.explorer-section .ex-trend-area{padding:4px 22px 14px;min-height:305px}
+.explorer-section .ex-trend-area svg{display:block;width:100%;height:auto;overflow:visible}
+.explorer-section .ex-chart-empty{display:grid;place-items:center;min-height:285px;color:#8c9cae;text-align:center;line-height:1.8;font-size:13px;padding:30px}
+.explorer-section .ex-legend-wrap{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding:0 26px 7px}
+.explorer-section .ex-legend{display:flex;gap:7px;flex-wrap:wrap}
+.explorer-section .ex-legend-pill{border:1px solid #e7edf5;background:#fff;border-radius:99px;padding:8px 10px;color:#4b5b70;font-size:11px;cursor:pointer}
+.explorer-section .ex-legend-pill:before{content:"";display:inline-block;background:var(--series-color);width:7px;height:7px;border-radius:50%;margin-right:7px}
+.explorer-section #ex-add-economy{border:1px solid #dce6f2;border-radius:9px;padding:8px;color:#4c6584;background:#f7f9fc;max-width:160px;font-size:11px}
+.explorer-section .ex-note{padding:4px 29px 24px;font-size:11px;line-height:1.7;color:#8695aa}
+.explorer-section .ex-market{margin-top:16px;background:linear-gradient(115deg,#102544,#142d54 60%,#23559e);padding:30px;border-radius:26px;color:#fff;display:grid;grid-template-columns:minmax(0,1fr) 1.4fr;gap:28px;position:relative;overflow:hidden}
+.explorer-section .ex-market:after{content:"";position:absolute;width:360px;height:360px;border:1px solid rgba(255,255,255,.12);border-radius:50%;right:-120px;top:-110px;pointer-events:none}
+.explorer-section .ex-market h3{font-size:28px;margin:10px 0 0;letter-spacing:-.04em}
+.explorer-section .ex-market small{color:#a5bad5}
+.explorer-section .ex-market-kicker{color:#9fc9ff;font-size:11px;letter-spacing:.13em}
+.explorer-section .ex-market-data{display:flex;gap:25px;flex-wrap:wrap;margin-top:20px}
+.explorer-section .ex-market-data>div{display:grid;gap:4px}
+.explorer-section .ex-market-data span{font-size:11px;color:#9bb4d2}
+.explorer-section .ex-market-data strong{font-size:19px;font-weight:740}
+.explorer-section .ex-market-answer{align-self:center;position:relative}
+.explorer-section .ex-market-answer span{color:#91b8ef;font-size:11px}
+.explorer-section .ex-market-answer p{font-size:22px;line-height:1.5;letter-spacing:-.03em;font-weight:650;margin:12px 0 16px}
+.explorer-section .ex-market-answer a{color:#cde5ff;font-size:12px;text-decoration:underline;text-underline-offset:3px}
+.explorer-section .ex-tools{margin-top:20px;display:flex;justify-content:space-between;gap:15px;align-items:center;flex-wrap:wrap}
+.explorer-section .ex-tools p{font-size:11px;color:#8290a4;line-height:1.7;max-width:790px;margin:0}
+.explorer-section .ex-tools button{background:#e8f2ff;color:#2c70ca;border-color:#d4e5fc;font-weight:700}
+@media(max-width:1000px){.explorer-section .ex-grid{grid-template-columns:1fr}.explorer-section .ex-hero{align-items:start;flex-direction:column;gap:12px}.explorer-section .ex-hero p{max-width:720px}.explorer-section .ex-trend-area{min-height:260px}}
+@media(max-width:590px){.explorer-section{padding-top:76px;padding-bottom:65px}.explorer-section .ex-stat{padding:15px 13px}.explorer-section .ex-stat strong{font-size:21px}.explorer-section .ex-hero h2{font-size:42px}.explorer-section .ex-rank-row,.explorer-section .ex-ranking-head{grid-template-columns:24px minmax(80px,1fr) minmax(46px,1fr) 72px 35px;gap:5px;padding-left:7px;padding-right:7px}.explorer-section .ex-pane-head{padding:24px 19px 16px}.explorer-section .ex-controls{padding:0 18px 15px}.explorer-section .ex-ranking{padding:0 10px}.explorer-section .ex-rank-name,.explorer-section .ex-rank-value{font-size:11px}.explorer-section .ex-market{grid-template-columns:1fr;padding:23px;gap:22px}.explorer-section .ex-market-answer p{font-size:20px}.explorer-section .ex-legend-wrap{padding:0 14px 6px}.explorer-section .ex-tools{align-items:stretch}.explorer-section .ex-tools button{width:100%}}
