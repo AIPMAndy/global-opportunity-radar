@@ -5,14 +5,16 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="color-scheme" content="light">
   <meta name="theme-color" content="#ffffff">
-  <meta name="description" content="全球机会雷达：用一颗可交互的地球观察全球经济、AI技术与创业信号。25个经济体，公开数据，自动更新。">
+  <meta name="description" content="全球机会雷达：用一颗可交互的地球观察全球经济、AI技术与创业信号。25个经济体、历史趋势、对比分析，开放数据自动更新。">
   <meta property="og:title" content="全球机会雷达 | 世界在变化，机会在哪里？">
   <meta property="og:description" content="全球经济 × AI发展 × 创业信号。免费的开源全球研究网站。">
   <meta property="og:type" content="website">
   <title>全球机会雷达 — 世界在变化，机会在哪里？</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css?v=2.0">
+  <link rel="stylesheet" href="explorer.css?v=2.1">
   <script defer src="app.js?v=2.0"></script>
+  <script defer src="explorer.js?v=2.1"></script>
 </head>
 <body>
   <a class="skip" href="#globe-section">跳转到地球地图</a>
@@ -23,7 +25,7 @@
         <span>Global<span class="brand-light">Radar</span></span><small>全球机会雷达</small>
       </a>
       <nav class="nav-links" aria-label="主导航">
-        <a href="#globe-section">全球地图</a><a href="#perspectives">四个市场</a><a href="#dashboard">经济数据</a><a href="#signals">AI 与创业</a>
+        <a href="#globe-section">全球地图</a><a href="#perspectives">四个市场</a><a href="#explorer">市场对比</a><a href="#dashboard">经济数据</a><a href="#signals">AI 与创业</a>
       </nav>
       <a class="nav-github" href="https://github.com/AIPMAndy/global-opportunity-radar" target="_blank" rel="noopener noreferrer">GitHub 开源 <span aria-hidden="true">↗</span></a>
     </div>
@@ -35,7 +37,7 @@
         <h1>世界在变化。<br><span class="hero-gradient">机会在哪里？</span></h1>
         <p class="hero-intro">同样是 2026 年，有些市场在加速创新，有些市场正在重新分配机会。把世界放在一颗地球上，观察经济、AI 和创业的真实信号。</p>
         <div class="hero-actions"><a class="btn btn-primary" href="#globe-section">开始探索 <span>↗</span></a><a class="btn btn-outline" href="#how">了解数据方法</a></div>
-        <div class="hero-proof"><span><strong>25</strong> 个重点经济体</span><i></i><span><strong>4</strong> 类开放数据源</span><i></i><span><strong>6h</strong> 自动尝试更新</span></div>
+        <div class="hero-proof"><span><strong>25</strong> 个重点经济体</span><i></i><span><strong>4</strong> 类开放数据源</span><i></i><span><strong>10y</strong> GDP 历史趋势</span></div>
       </div>
       <div class="hero-planet" aria-hidden="true">
         <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
@@ -85,6 +87,58 @@
         <button type="button" class="region-card region-hk" data-country="HKG"><span class="region-head"><span>04 / HONG KONG SAR</span><span>↗</span></span><span class="region-emblem">⇄</span><strong>中国香港</strong><em>国际连接与专业服务</em><span class="region-body">观察跨境交易、融资与专业服务需求，寻找连接不同市场的切入点。</span><span class="region-link">查看中国香港指标 →</span></button>
       </div>
     </div></section>
+
+
+    <section class="section container explorer-section" id="explorer" aria-labelledby="explorer-title">
+      <div class="ex-hero">
+        <div><span class="ex-eyebrow">06 / GLOBAL MARKET EXPLORER</span><h2 id="explorer-title">谁在增长？<br>让数据回答。</h2></div>
+        <p>从 25 个经济体中筛选市场，查看 GDP 历史曲线，比较投资与就业。每一项数字都对应来源和统计年份。</p>
+      </div>
+      <div class="ex-statline" aria-label="数据完整度">
+        <div class="ex-stat"><span>拥有 GDP 数据的经济体</span><strong id="ex-coverage">—</strong></div>
+        <div class="ex-stat"><span>最近的 GDP 统计年份</span><strong id="ex-latest-year">—</strong></div>
+        <div class="ex-stat"><span>数据快照抓取日期</span><strong id="ex-captured">—</strong></div>
+      </div>
+      <div class="ex-grid">
+        <div class="ex-panel">
+          <div class="ex-pane-head"><h3>全球经济体榜单</h3><p id="ex-rank-sub">切换指标与区域。数值不同年份时，请先检查统计年份。</p></div>
+          <div class="ex-controls">
+            <label class="sr-only" for="ex-metric">选择指标</label>
+            <select id="ex-metric">
+              <option value="gdp">GDP 年增长率</option><option value="inflation">消费价格通胀</option><option value="unemployment">失业率</option><option value="fdi">FDI / GDP</option><option value="income">人均 GDP（美元）</option>
+            </select>
+            <label class="sr-only" for="ex-region">选择区域</label>
+            <select id="ex-region"><option value="ALL">全部区域</option></select>
+            <button type="button" id="ex-sort">从高到低 ↓</button>
+          </div>
+          <div class="ex-ranking-head" aria-hidden="true"><span>序号</span><span>经济体</span><span>相对数值</span><span>指标</span><span>年份</span></div>
+          <div id="ex-ranking" class="ex-ranking" aria-label="经济体指标排序列表"></div>
+          <div class="ex-pane-foot"><span>只比较观测值，未计算主观创业评分。</span><button type="button" id="ex-more">查看全部 25 个</button></div>
+        </div>
+        <div class="ex-panel">
+          <div class="ex-pane-head"><h3>GDP 增长历史</h3><p>自动采集最近约十年的实际 GDP 年增长率，识别增长与周期变化。</p></div>
+          <div class="ex-legend-wrap">
+            <div class="ex-legend" id="ex-legend" aria-label="当前对比经济体"></div>
+            <label class="sr-only" for="ex-add-economy">添加经济体</label><select id="ex-add-economy" aria-label="添加经济体用于历史对比"><option value="">添加经济体</option></select>
+          </div>
+          <div class="ex-trend-area" id="ex-trend" aria-live="polite"><div class="ex-chart-empty">正在读取历史数据…</div></div>
+          <div class="ex-note" id="ex-trend-period">历史值以世界银行公布的统计年份为准。</div>
+        </div>
+      </div>
+      <div class="ex-market" aria-label="所选市场研究提示">
+        <div>
+          <div class="ex-market-kicker">SELECTED ECONOMY / RESEARCH BRIEF</div>
+          <h3 id="ex-market-name">美国</h3><small id="ex-market-english">United States</small>
+          <div class="ex-market-data">
+            <div><span>GDP 增长率</span><strong id="ex-market-gdp">—</strong><small id="ex-market-year">等待数据</small></div>
+            <div><span>FDI / GDP</span><strong id="ex-market-fdi">—</strong></div>
+            <div><span>人均 GDP</span><strong id="ex-market-income">—</strong></div>
+          </div>
+        </div>
+        <div class="ex-market-answer"><span>值得验证的真实商业问题</span><p id="ex-market-question">AI 产品的投入如何转化为客户愿意支付的收入？</p><a id="ex-market-source" href="https://data.worldbank.org/" target="_blank" rel="noopener noreferrer">查看这个经济体的原始数据 ↗</a></div>
+      </div>
+      <div class="ex-tools"><p id="ex-quality-note">先有原始数据，再判断市场趋势。观察问题是研究方向，并非已经得到验证的投资结论。</p><button type="button" id="ex-download">↓ 下载 25 个经济体 CSV 数据</button></div>
+    </section>
 
     <section class="section container" id="dashboard">
       <div class="section-heading"><div><div class="section-index">03 / ECONOMIC INDICATORS</div><h2>用数据对比，<br>让直觉接受检验。</h2></div><p>统计年份不同，不能把经济增长率误读成今天的实时景气度。</p></div>
