@@ -1,4 +1,4 @@
-# 从零部署：全球机会雷达 V2
+# 从零部署：全球机会雷达 V2.1
 
 这份教程适用于没有前端经验、只想用 GitHub 免费部署网站的人。
 
@@ -65,7 +65,7 @@ https://aipmandy.github.io/global-opportunity-radar/
 
 V2 使用内置 Canvas，不再依赖 Globe.gl、Three.js、地图贴图 CDN。
 
-- 确认 app.js、styles.css 和 data/world.json 已存在于仓库 main 分支。
+- 确认 app.js、explorer.js、styles.css、explorer.css 和 data/world.json 已存在于仓库 main 分支。
 - 打开浏览器开发者工具，查看 Console 是否有 JavaScript 错误。
 - 检查浏览器是否允许 JavaScript 和 Canvas。
 - 刷新缓存；若使用了旧版缓存，请尝试强制刷新页面。
@@ -94,6 +94,8 @@ V2 使用内置 Canvas，不再依赖 Globe.gl、Three.js、地图贴图 CDN。
 前端无依赖，代码修改刷新即可。可以用下面的命令做基础检查：
 
     node --check app.js
+    node --check explorer.js
+    python3 -m unittest discover -s tests -v
     python3 -m py_compile scripts/collect.py
 
 本地运行一次采集：
@@ -105,7 +107,8 @@ V2 使用内置 Canvas，不再依赖 Globe.gl、Three.js、地图贴图 CDN。
 ## 7. 改成你自己的全球观察平台
 
 - 首页文案和页面模块：index.html
-- 颜色、字体、间距和移动端样式：styles.css
+- 颜色、字体、间距和移动端样式：styles.css / explorer.css
+- 全球榜单、历史图和 CSV：explorer.js
 - 经济体坐标、研究问题、筛选与交互：app.js
 - 采集指标、API 路径、采集频率：scripts/collect.py
 - 自动部署频率与构建步骤：.github/workflows/pages.yml
