@@ -4,7 +4,7 @@
 >
 > 用一颗可以交互的地球，持续观察全球经济、AI 技术与创业产品的变化。
 
-[**在线打开网站**](https://aipmandy.github.io/global-opportunity-radar/) · [**查看部署状态**](https://github.com/AIPMAndy/global-opportunity-radar/actions) · [**数据方法**](docs/DATA_SOURCES.md) · [**保姆级部署**](docs/DEPLOY.md)
+[**在线打开网站**](https://aipmandy.github.io/global-opportunity-radar/) · [**查看部署状态**](https://github.com/AIPMAndy/global-opportunity-radar/actions) · [**五分钟上手**](docs/QUICKSTART.md) · [**数据方法**](docs/DATA_SOURCES.md) · [**保姆级部署**](docs/DEPLOY.md)
 
 由 [AI 酋长 Andy](https://github.com/AIPMAndy) 发起的免费开源研究项目。适合创业者、AI 产品经理、独立开发者和想对比不同市场的人。
 
@@ -18,10 +18,12 @@
 2. **AI 发展**：开源生态的新项目、OpenAlex 论文关键词匹配记录。
 3. **创业动态**：Hacker News 新产品发布、值得进一步验证的商业场景。
 
-## V2.0 功能
+## V2.1 功能
 
 - **可交互的 3D 风格地球**：拖动旋转、滚轮缩放、点击光点、键盘方向键；完全本地 Canvas 绘制，**不依赖第三方地图 CDN**。
 - **25 个重点经济体**：美国、越南、中国内地、中国香港、新加坡等，支持搜索、选择和指标对比。
+- **机会对比实验室（V2.1）**：五项指标按地区筛选、排序，并可导出 25 个经济体 CSV 数据。
+- **GDP 历史趋势（V2.1）**：最近约 10 年的年度观察值；最多对比 5 个经济体，缺失年份不补线。
 - **经济指标卡**：五项世界银行公开指标，标注统计年份，缺失数据保留「—」。
 - **四个市场研究切面**：AI 创新、产业链迁移、效率竞争、国际连接。
 - **AI 与创业信号**：GitHub 最近 30 天 AI agents 主题仓库、OpenAlex 关键词匹配、Hacker News Show HN。
@@ -43,6 +45,7 @@
 - **index.html** — 页面内容及结构
 - **styles.css** — 视觉系统、响应式布局
 - **app.js** — Canvas 地球、地图交互、经济对比、数据展示
+- **explorer.js / explorer.css** — 经济体排序、GDP 历史曲线与 CSV 下载
 - **favicon.svg** — 网站标志
 - **data/world.json** — 与网站一同部署的海岸线数据
 - **data/snapshot.json** — 未采集状态的原始空值快照，部署时由采集器更新
@@ -50,6 +53,8 @@
 - **.github/workflows/pages.yml** — GitHub Pages 自动更新与发布
 - **docs/DEPLOY.md** — 从零部署与打不开排查
 - **docs/DATA_SOURCES.md** — 指标口径、来源与方法
+- **tests/test_collect.py** — 无网络依赖的采集器测试
+- **docs/QUICKSTART.md** — 五分钟市场研究指南
 
 ## 数据来源
 
@@ -62,6 +67,19 @@
 
 **重要区别**：每六小时是程序抓取频率，非宏观经济指标发布频率。每条数值应结合来源和统计年份理解。抓取异常不会被写成 0。
 
+## 5 分钟判断一个市场
+
+打开网站的 [市场对比](https://aipmandy.github.io/global-opportunity-radar/#explorer)，选择 GDP 年增长率，查看每个经济体及其统计年份，再切换到 FDI、失业率、人均 GDP；右侧的 GDP 历史曲线可以对比美国、越南、中国内地、中国香港的周期变化。点击市场卡片上的原始数据链接继续查证，也能下载 CSV 进一步分析。
+
+排序是数据整理工具，不代表创业成功率或投资收益。详见 [五分钟上手指南](docs/QUICKSTART.md)。
+
+### 本地验证
+
+    node --check app.js
+    node --check explorer.js
+    python3 -m unittest discover -s tests -v
+    python3 -m http.server 8000
+
 ## 技术架构
 
 前端使用静态 HTML、CSS 和 Canvas。世界地图资源跟随仓库一起发布，不需要请求第三方 3D 库。Python 采集器并发访问四类公开 API，生成 JSON 快照。GitHub Actions 将生产文件复制到独立的 _site 目录并部署。
@@ -70,7 +88,7 @@
 
 ## 未来版本
 
-1. 历史年份曲线、更多自定义国家对比。
+1. 增加同年比较开关、行业维度与完整历史区间下载。
 2. 区分 AI 科研、开源、企业落地和招聘信号。
 3. 具有原始链接、发布日期和事实口径的全球融资事件库。
 4. 行业机会档案：谁有痛点、谁来付钱、验证结果如何。
