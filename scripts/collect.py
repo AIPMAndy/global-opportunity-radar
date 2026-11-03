@@ -1,14 +1,21 @@
 #!/usr/bin/env python3
-"""Refresh a source-labelled public-data snapshot. No fabricated numbers."""
-import datetime as dt
+"""Global Opportunity Radar: refresh source-attributed public signals.
+
+All economic figures retain their official statistical year. API errors are
+reported as missing data; the site deploys even if every provider is offline.
+Only Python standard-library modules are required.
+"""
+from __future__ import annotations
+
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+from urllib.parse import urlencode, quote
+from urllib.request import Request, urlopen
 import json
 import os
-import pathlib
-import time
-import urllib.parse
-import urllib.request
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parent.parent
 OUTPUT = ROOT / "data" / "snapshot.json"
 COUNTRIES = "USA VNM CHN HKG SGP TWN JPN KOR IND IDN MYS THA PHL AUS NZL DEU GBR FRA NLD CHE ARE SAU BRA MEX CAN".split()
 INDICATORS = {
@@ -18,121 +25,134 @@ INDICATORS = {
     "fdi": "BX.KLT.DINV.WD.GD.ZS",
     "income": "NY.GDP.PCAP.CD",
 }
-AGENT = "GlobalOpportunityRadar/1.0 (open-source research project)"
-TODAY = dt.datetime.now(dt.timezone.utc)
+NOW = datetime.now(timezone.utc)
+TIMEOUT = float(os.environ.get("RADAR_HTTP_TIMEOUT", "12"))
+USER_AGENT = "GlobalOpportunityRadar/2.0 (open-source dashboard)"
 
-def get_json(url, token=None):
-    headers = {"User-Agent": AGENT, "Accept": "application/json"}
+def get_json(url: str, token: str | None = None) -> object:
+    headers = {"User-Agent": USER_AGENT, "Accept": "application/json"}
     if token:
         headers["Authorization"] = "Bearer " + token
-    request = urllib.request.Request(url, headers=headers)
-    last = None
-    for attempt in range(2):
-        try:
-            with urllib.request.urlopen(request, timeout=22) as response:
-                return json.load(response)
-        except Exception as exc:
-            last = exc
-            if attempt == 0:
-                time.sleep(1)
-    raise RuntimeError(str(last))
+    request = Request(url, headers=headers)
+    with urlopen(request, timeout=TIMEOUT) as response:
+        return json.load(response)
 
-def main():
+def build_tasks() -> dict[str, tuple[str, str | None, str]]:
+    tasks = {}
+    country_codes = ";".join(COUNTRIES)
+    start = max(2021, NOW.year - 5)
+    for key, indicator in INDICATORS.items():
+        url = ("https://api.worldbank.org/v2/country/" + country_codes +
+               "/indicator/" + indicator + "?format=json&date=" +
+               str(start) + ":" + str(NOW.year) + "&per_page=1000")
+        tasks["worldbank_" + key] = (url, None, "worldbank")
+    since = (NOW - timedelta(days=30)).date().isoformat()
+    github = "https://api.github.com/search/repositories?" + urlencode({
+        "q": "topic:ai-agents created:>=" + since,
+        "sort": "stars", "order": "desc", "per_page": 8,
+    })
+    tasks["github"] = (github, os.environ.get("GITHUB_TOKEN"), "github")
+    tasks["hackernews"] = ("https://hn.algolia.com/api/v1/search_by_date?"
+                           "tags=show_hn&query=AI&hitsPerPage=8", None, "hackernews")
+    previous_month_end = NOW.date().replace(day=1) - timedelta(days=1)
+    first = previous_month_end.replace(day=1).isoformat()
+    last = previous_month_end.isoformat()
+    oa_url = "https://api.openalex.org/works?" + urlencode({
+        "search": "artificial intelligence",
+        "filter": "from_publication_date:" + first + ",to_publication_date:" + last,
+        "per-page": 1,
+    })
+    key = os.environ.get("OPENALEX_API_KEY")
+    if key:
+        oa_url += "&api_key=" + quote(key)
+    tasks["openalex"] = (oa_url, None, "openalex")
+    return tasks
+
+def main() -> None:
     out = {
-        "schema": 1,
-        "collected_at": TODAY.isoformat().replace("+00:00", "Z"),
+        "schema": 2,
+        "collected_at": NOW.isoformat().replace("+00:00", "Z"),
         "countries": COUNTRIES,
         "indicators": INDICATORS,
-        "metrics": {country: {} for country in COUNTRIES},
+        "metrics": {code: {} for code in COUNTRIES},
         "sources": {},
         "github": None,
         "hackernews": None,
         "openalex": None,
     }
-    countries = ";".join(COUNTRIES)
-    for short, code in INDICATORS.items():
-        url = ("https://api.worldbank.org/v2/country/" + countries +
-               "/indicator/" + code + "?format=json&date=2021:" +
-               str(TODAY.year) + "&per_page=1000")
-        try:
-            response = get_json(url)
-            records = response[1] if isinstance(response, list) and len(response) > 1 else []
-            if not isinstance(records, list):
-                raise ValueError("Unexpected World Bank schema")
-            for record in records:
-                iso = record.get("countryiso3code")
-                value = record.get("value")
-                if iso not in out["metrics"] or value is None:
-                    continue
-                existing = out["metrics"][iso].get(short)
-                year = record.get("date")
-                if not existing or str(year) > str(existing["year"]):
-                    out["metrics"][iso][short] = {"value": value, "year": year, "indicator": code}
-            out["sources"]["worldbank_" + short] = {"ok": True, "url": url}
-        except Exception as exc:
-            out["sources"]["worldbank_" + short] = {"ok": False, "error": str(exc)[:180], "url": url}
-
-    date = (TODAY - dt.timedelta(days=30)).date().isoformat()
-    github_url = "https://api.github.com/search/repositories?" + urllib.parse.urlencode({
-        "q": "topic:ai-agents created:>=" + date,
-        "sort": "stars", "order": "desc", "per_page": 6
-    })
-    try:
-        response = get_json(github_url, os.environ.get("GITHUB_TOKEN"))
-        out["github"] = {
-            "matched": response.get("total_count"),
-            "window_start": date,
-            "items": [
-                {"name": item.get("full_name"), "url": item.get("html_url"),
-                 "stars": item.get("stargazers_count"), "description": item.get("description")}
-                for item in response.get("items", [])[:6]
-            ],
+    tasks = build_tasks()
+    # Independent requests: one stalled provider must not block other sources.
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futures = {
+            pool.submit(get_json, url, token): name
+            for name, (url, token, kind) in tasks.items()
         }
-        out["sources"]["github"] = {"ok": True, "url": github_url}
-    except Exception as exc:
-        out["sources"]["github"] = {"ok": False, "error": str(exc)[:180], "url": github_url}
-
-    hn_url = "https://hn.algolia.com/api/v1/search_by_date?tags=show_hn&query=AI&hitsPerPage=8"
-    try:
-        response = get_json(hn_url)
-        out["hackernews"] = {
-            "items": [
-                {"title": item.get("title"),
-                 "url": item.get("url") or ("https://news.ycombinator.com/item?id=" + str(item.get("objectID"))),
-                 "date": item.get("created_at"), "points": item.get("points")}
-                for item in response.get("hits", [])
-            ]
-        }
-        out["sources"]["hackernews"] = {"ok": True, "url": hn_url}
-    except Exception as exc:
-        out["sources"]["hackernews"] = {"ok": False, "error": str(exc)[:180], "url": hn_url}
-
-    # OpenAlex result is explicitly a keyword search, not a measure of AI breakthroughs.
-    month_start = TODAY.replace(day=1).date() - dt.timedelta(days=1)
-    first = month_start.replace(day=1).isoformat()
-    last = month_start.isoformat()
-    oa_url = "https://api.openalex.org/works?" + urllib.parse.urlencode({
-        "search": "artificial intelligence",
-        "filter": "from_publication_date:" + first + ",to_publication_date:" + last,
-        "per-page": 1,
-    })
-    try:
-        if os.environ.get("OPENALEX_API_KEY"):
-            oa_url += "&api_key=" + urllib.parse.quote(os.environ["OPENALEX_API_KEY"])
-        response = get_json(oa_url)
-        out["openalex"] = {
-            "search_term": "artificial intelligence",
-            "period": first + "/" + last,
-            "matched_works": response.get("meta", {}).get("count"),
-            "definition": "OpenAlex indexed works matching keyword search; not all AI research",
-        }
-        out["sources"]["openalex"] = {"ok": True, "url": oa_url.split("&api_key=")[0]}
-    except Exception as exc:
-        out["sources"]["openalex"] = {"ok": False, "error": str(exc)[:180], "url": oa_url.split("&api_key=")[0]}
-
+        for future in as_completed(futures):
+            name = futures[future]
+            url, _, kind = tasks[name]
+            # Never publish an API key in the snapshot.
+            public_url = url.split("&api_key=")[0]
+            try:
+                data = future.result()
+                if kind == "worldbank":
+                    rows = data[1] if isinstance(data, list) and len(data) > 1 else None
+                    if not isinstance(rows, list):
+                        raise ValueError("World Bank returned an unexpected schema")
+                    key = name.removeprefix("worldbank_")
+                    for row in rows:
+                        code, value = row.get("countryiso3code"), row.get("value")
+                        if code not in out["metrics"] or value is None:
+                            continue
+                        date = str(row.get("date", ""))
+                        previous = out["metrics"][code].get(key)
+                        if not previous or date > str(previous["year"]):
+                            out["metrics"][code][key] = {
+                                "value": value, "year": date,
+                                "indicator": INDICATORS[key]
+                            }
+                elif kind == "github":
+                    if not isinstance(data, dict):
+                        raise ValueError("Invalid GitHub response")
+                    out["github"] = {
+                        "matched": data.get("total_count"),
+                        "window_start": (NOW-timedelta(days=30)).date().isoformat(),
+                        "items": [{
+                            "name": x.get("full_name"), "url": x.get("html_url"),
+                            "stars": x.get("stargazers_count"),
+                            "description": x.get("description")
+                        } for x in data.get("items", [])[:8]]
+                    }
+                elif kind == "hackernews":
+                    if not isinstance(data, dict):
+                        raise ValueError("Invalid Hacker News response")
+                    out["hackernews"] = {"items": [{
+                        "title": x.get("title"),
+                        "url": x.get("url") or
+                            "https://news.ycombinator.com/item?id=" + str(x.get("objectID")),
+                        "date": x.get("created_at"), "points": x.get("points"),
+                    } for x in data.get("hits", [])[:8]]}
+                elif kind == "openalex":
+                    if not isinstance(data, dict):
+                        raise ValueError("Invalid OpenAlex response")
+                    previous_end = NOW.date().replace(day=1) - timedelta(days=1)
+                    first = previous_end.replace(day=1).isoformat()
+                    out["openalex"] = {
+                        "search_term": "artificial intelligence",
+                        "period": first + "/" + previous_end.isoformat(),
+                        "matched_works": data.get("meta", {}).get("count"),
+                        "definition": "Keyword search of indexed works, not all AI research."
+                    }
+                out["sources"][name] = {"ok": True, "url": public_url}
+            except Exception as exc:
+                out["sources"][name] = {
+                    "ok": False, "url": public_url, "error": str(exc)[:160]
+                }
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT.write_text(json.dumps(out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print("Wrote", OUTPUT, "sources:", {k: v["ok"] for k, v in out["sources"].items()})
+    OUTPUT.write_text(json.dumps(out, ensure_ascii=False, indent=2) + "\n",
+                      encoding="utf-8")
+    print("Snapshot:", OUTPUT)
+    print("Providers:", {k: v["ok"] for k, v in out["sources"].items()})
+    print("Economies with GDP:", sum("gdp" in x for x in out["metrics"].values()))
 
 if __name__ == "__main__":
     main()
