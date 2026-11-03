@@ -33,13 +33,15 @@ jobs:
       - name: Validate code and bundled assets
         run: |
           node --check app.js
+          node --check explorer.js
           python -m py_compile scripts/collect.py
+          python -m unittest discover -s tests -v
           python -c "import json; assert len(json.load(open('data/world.json'))) > 100"
           test -f index.html && test -f styles.css && test -f favicon.svg
       - name: Prepare offline-first static site
         run: |
           mkdir -p _site/data
-          cp index.html styles.css app.js favicon.svg _site/
+          cp index.html styles.css app.js explorer.css explorer.js favicon.svg _site/
           cp data/world.json data/snapshot.json _site/data/
           touch _site/.nojekyll
           echo 'Static site staged; deployment does not depend on third-party API availability.'
