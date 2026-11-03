@@ -1,42 +1,108 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#f6f8fc"><title>全球机会雷达 · Global Opportunity Radar</title><meta name="description" content="全球经济、AI与创业信号观察平台｜AI酋长Andy"><script defer src="https://cdn.jsdelivr.net/npm/globe.gl@2.45.1/dist/globe.gl.min.js"></script>
-<style>
-:root{color-scheme:light;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Microsoft Yahei",sans-serif;color:#111827;background:#f5f7fb}*{box-sizing:border-box}body{margin:0}button,input{font:inherit}a{color:inherit;text-decoration:none}.shell{max-width:1370px;margin:auto;padding:0 30px}.top{height:72px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e6eaf2;background:#fff}.brand{font-size:18px;font-weight:800;letter-spacing:-.5px}.brand em{font-style:normal;color:#3778ea}.top a.link{color:#475569;font-size:13px}.hero{display:flex;justify-content:space-between;align-items:center;gap:48px;padding:76px 0 58px}.kicker{font-size:12px;font-weight:800;letter-spacing:2px;color:#4172ce}.hero h1{font-size:clamp(43px,6vw,78px);letter-spacing:-3px;line-height:1.16;margin:16px 0}.hero h1 span{background:linear-gradient(90deg,#3e70ee,#7c4adf);background-clip:text;-webkit-background-clip:text;color:transparent}.lead{font-size:17px;line-height:1.9;color:#596679;max-width:690px}.side-intro{min-width:270px;background:#fff;border:1px solid #e8ecf3;border-radius:26px;padding:26px;box-shadow:0 20px 45px #142e5410}.side-intro p{margin:12px 0;color:#45526a}.side-intro strong{font-size:12px;color:#8a97ae;letter-spacing:2px}.card{background:#fff;border:1px solid #e8ebf1;border-radius:26px;overflow:hidden;box-shadow:0 14px 42px #163c6610}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:18px}.mini{padding:23px}.mini span{font-size:12px;color:#78869a}.mini b{display:block;font-size:29px;margin:7px 0;letter-spacing:-1px}.mini small{font-size:11px;color:#9ca6b5}.section-title{display:flex;align-items:end;justify-content:space-between;margin:35px 0 18px;gap:15px}.section-title h2{font-size:31px;letter-spacing:-1px;margin:0}.section-title p{font-size:12px;color:#8390a3}.dashboard{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(285px,.85fr);gap:18px}.map{position:relative;min-height:615px;background:radial-gradient(circle at 50% 50%,#e3edff,#f9fbff 68%);overflow:hidden}.map-head{position:absolute;z-index:3;left:24px;top:20px;right:24px;display:flex;justify-content:space-between;align-items:center}.upper{font-size:11px;color:#73829a;font-weight:750;letter-spacing:1.5px}.map-head small{color:#8e9bb0}#globe{width:100%;height:600px}.map-foot{position:absolute;z-index:3;bottom:17px;left:20px;right:20px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.pills{display:flex;flex-wrap:wrap;gap:7px}.pill{border:1px solid #d9e1ee;background:#ffffffcf;border-radius:99px;padding:8px 12px;color:#45597a;font-size:12px;cursor:pointer}.pill.active,.pill:hover{background:#2d66dd;color:white}.helper{font-size:12px;color:#91a0b5}.fallback{position:absolute;left:15%;right:15%;top:45%;text-align:center;color:#8091ad;display:none}.panel{padding:28px}.panel input{border:1px solid #dfe6f0;border-radius:12px;outline:0;width:100%;padding:14px;background:#f7f9fc;margin:13px 0 23px}.panel input:focus{border-color:#6b94ec}.panel h2{font-size:32px;margin:12px 0 2px;letter-spacing:-1px}.en{color:#8897ad;font-size:13px;margin-bottom:26px}.key-num{font-size:46px;font-weight:800;letter-spacing:-2px}.label{font-size:12px;color:#7c8ba0}.year{font-size:12px;color:#a4adbd}.detail{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:23px 0}.detail .item{background:#f6f9fc;padding:15px;border-radius:14px}.detail .item b{font-size:22px;display:block;margin:5px 0}.question{background:#f0f5ff;border:1px solid #e0eaff;border-radius:15px;padding:16px;color:#36547d;line-height:1.7}.question strong{font-size:12px;display:block;color:#4769a2}.sources{font-size:12px;color:#5379b4;margin-top:18px}.warning{font-size:11px;line-height:1.7;color:#99a2b2}.feeds{display:grid;grid-template-columns:1fr 1fr;gap:18px}.feed{padding:24px}.feed h3{margin:0 0 7px;font-size:18px}.feed p{font-size:12px;color:#8290a5}.entry{border-top:1px solid #eef1f6;padding:15px 0;display:block}.entry b{font-size:14px;line-height:1.5}.entry small{display:block;color:#95a2b3;margin-top:5px}.entry:hover b{color:#376be1}.foot{margin-top:30px;border-top:1px solid #e2e8f1;padding:35px 0 50px;color:#8a96a8;font-size:12px;display:flex;justify-content:space-between;gap:20px}.status{font-size:12px;color:#7c8b9f;min-height:20px}.chip{display:inline-block;background:#e9f1ff;color:#3971ce;padding:7px 12px;border-radius:99px;font-size:11px;font-weight:700}@media(max-width:900px){.hero{padding:48px 0;display:block}.side-intro{margin-top:25px}.dashboard,.feeds{grid-template-columns:1fr}.map{min-height:520px}#globe{height:520px}.metrics{grid-template-columns:repeat(2,1fr)}.hero h1{letter-spacing:-1.5px}}@media(max-width:520px){.shell{padding:0 16px}.top{height:64px}.hero{padding:40px 0 25px}.hero h1{font-size:43px}.metrics{gap:10px}.mini{padding:16px}.mini b{font-size:24px}.map-head{left:15px;right:15px}.map-foot{left:12px;right:12px}.map{min-height:490px}#globe{height:490px}.panel{padding:22px}.section-title h2{font-size:25px}.top .link{font-size:11px}}
-</style></head><body>
-<header class="top shell"><a href="#" class="brand">◉ Global<em>Radar</em></a><a class="link" href="https://github.com/AIPMAndy/global-opportunity-radar" target="_blank" rel="noopener">GitHub 开源项目 ↗</a></header>
-<main class="shell"><div class="hero"><div><div class="kicker">GLOBAL OPPORTUNITY RADAR / V1</div><h1>世界一直在变化。<br><span>机会在哪里？</span></h1><p class="lead">在一颗地球上观察全球经济、AI 开源和创业产品发布。不要因为自己所在的市场进入存量竞争，就误以为全世界都没有机会。</p><span class="chip">开放数据 · 标明年份 · 原始来源可追溯</span></div><aside class="side-intro"><strong>WHAT WE TRACK</strong><p>01 / 经济增长与市场周期</p><p>02 / AI 开源与技术活动</p><p>03 / 创业产品发布信号</p></aside></div>
-<div class="metrics"><div class="mini card"><span>重点观察经济体</span><b id="total">25</b><small>并非全球所有经济体</small></div><div class="mini card"><span>已选择经济体</span><b id="selected-kpi">美国</b><small>点击地图切换</small></div><div class="mini card"><span>近 30 日 AI 开源搜索</span><b id="github-kpi">—</b><small>GitHub 公开 API，非公司数量</small></div><div class="mini card"><span>产品社区动态</span><b id="hn-kpi">—</b><small>Hacker News / Show HN</small></div></div>
-<div class="status" id="snapshot-status" style="padding:0 3px 12px">公开数据快照：正在读取，页面同时尝试实时查询原始接口。</div><div class="section-title"><h2>打开地球，看见变化。</h2><p>拖动旋转 · 滚轮缩放 · 点击经济体</p></div>
-<div class="dashboard"><section class="map card"><div class="map-head"><div class="upper">◉ GLOBAL ECONOMIC MAP</div><small id="globe-status">地球正在加载</small></div><div id="globe"></div><div class="fallback" id="fallback">3D 地球资源未加载，请点击下方地区名称。</div><div class="map-foot"><div class="pills" id="focus"></div><span class="helper">指标为不同统计年份，需单独核对</span></div></section><aside class="panel card"><div class="upper">SELECT ECONOMY</div><input id="search" placeholder="搜索国家或地区" aria-label="搜索经济体" list="country-names"><datalist id="country-names"></datalist><div class="upper" id="region">NORTH AMERICA</div><h2 id="country">美国</h2><div class="en" id="english">United States</div><div class="label">GDP 年增长率</div><div><span id="gdp" class="key-num">—</span><span id="gdp-year" class="year"></span></div><div class="detail"><div class="item"><div class="label">消费价格通胀</div><b id="inflation">—</b><small class="year" id="inflation-year"></small></div><div class="item"><div class="label">失业率</div><b id="unemployment">—</b><small class="year" id="unemployment-year"></small></div><div class="item"><div class="label">FDI 净流入 / GDP</div><b id="fdi">—</b><small class="year" id="fdi-year"></small></div><div class="item"><div class="label">人均 GDP（美元）</div><b id="income">—</b><small class="year" id="income-year"></small></div></div><div class="question"><strong>值得验证的创业问题</strong><span id="question"></span></div><div class="sources"><a id="wbsource" href="https://data.worldbank.org/" target="_blank" rel="noopener">查看世界银行原始指标 ↗</a></div><p class="warning">这些宏观数据主要是年度统计，实时重新查询不代表数据实时生成。不同指标可能来自不同年份。市场热度不等于盈利能力。</p><div class="status" id="data-status">等待查询</div></aside></div>
-<div class="section-title"><h2>AI 与创业动态。</h2><p>公开项目和产品发布，不代表融资或盈利</p></div>
-<div class="feeds"><section class="feed card"><h3>AI 开源活动</h3><p>最近新增的 AI agent / LLM 相关公开仓库</p><div id="github-feed" class="status">正在查询 GitHub…</div><a class="sources" href="https://github.com/topics/ai-agents" target="_blank" rel="noopener">GitHub Topic ↗</a></section><section class="feed card"><h3>产品发布信号</h3><p>Hacker News 社区最新 Show HN / AI 讨论</p><div id="hn-feed" class="status">正在查询 Hacker News…</div><a class="sources" href="https://news.ycombinator.com/show" target="_blank" rel="noopener">Show HN ↗</a></section></div>
-<footer class="foot"><span>© Global Opportunity Radar · AI 酋长 Andy</span><span>数据研究工具 · 无投资或商业收益承诺 · <a href="https://github.com/AIPMAndy/global-opportunity-radar">GitHub</a></span></footer></main>
-<script>
-const C=[
-['US','USA','美国','United States','NORTH AMERICA',38,-98,'AI 技术热度能否转化成持续付费的产业客户？'],
-['VN','VNM','越南','Vietnam','SOUTHEAST ASIA',16,108,'制造业转移能带来哪些物流、软件和本地服务需求？'],
-['CN','CHN','中国内地','Mainland China','EAST ASIA',35,105,'哪些细分客户仍愿意为降本增效持续付费？'],
-['HK','HKG','中国香港','Hong Kong SAR','EAST ASIA',22.3,114.2,'哪些跨境客户需求正在增长？'],
-['SG','SGP','新加坡','Singapore','SOUTHEAST ASIA',1.35,103.8,'东南亚区域总部的预算流向了哪些企业服务？'],
-['TW','TWN','中国台湾','Taiwan','EAST ASIA',23.7,121,'AI 芯片供应链的增量需求由谁承接？'],
-['JP','JPN','日本','Japan','EAST ASIA',36,138,'老龄化与产业自动化创造哪些新需求？'],
-['KR','KOR','韩国','South Korea','EAST ASIA',36,128,'半导体与内容产业的价值链如何变化？'],
-['IN','IND','印度','India','SOUTH ASIA',22,78,'软件服务和制造业需求的可付费客户在哪里？'],
-['ID','IDN','印度尼西亚','Indonesia','SOUTHEAST ASIA',-2,118,'年轻人口与数字商业的真实客单价如何？'],
-['MY','MYS','马来西亚','Malaysia','SOUTHEAST ASIA',4,102,'数据中心和制造投资如何带动本地市场？'],
-['TH','THA','泰国','Thailand','SOUTHEAST ASIA',15,101,'旅游消费与制造业转型存在哪些新机会？'],
-['PH','PHL','菲律宾','Philippines','SOUTHEAST ASIA',12,123,'英语服务能力如何与 AI 结合形成新供给？'],
-['AU','AUS','澳大利亚','Australia','OCEANIA',-25,134,'高成本劳动力市场有哪些自动化需求？'],
-['NZ','NZL','新西兰','New Zealand','OCEANIA',-41,174,'小市场中什么产品具有跨境可复制性？'],
-['DE','DEU','德国','Germany','EUROPE',51,10,'工业企业采用 AI 时的采购阻力是什么？'],
-['GB','GBR','英国','United Kingdom','EUROPE',54,-2,'金融与专业服务的 AI 预算如何变化？'],
-['FR','FRA','法国','France','EUROPE',46,2,'公共研发与商业落地之间的缺口在哪？'],
-['NL','NLD','荷兰','Netherlands','EUROPE',52,5,'物流、芯片和跨境贸易中哪些环节增长？'],
-['CH','CHE','瑞士','Switzerland','EUROPE',47,8,'高价值专业服务如何采用 AI？'],
-['AE','ARE','阿联酋','United Arab Emirates','MIDDLE EAST',24,54,'基础设施投资如何形成真实客户需求？'],
-['SA','SAU','沙特阿拉伯','Saudi Arabia','MIDDLE EAST',24,45,'大规模投资项目有多少持续经营型市场？'],
-['BR','BRA','巴西','Brazil','SOUTH AMERICA',-14,-52,'数字支付和消费市场有哪些新渠道？'],
-['MX','MEX','墨西哥','Mexico','NORTH AMERICA',23,-102,'近岸制造如何形成当地供应链服务需求？'],
-['CA','CAN','加拿大','Canada','NORTH AMERICA',56,-106,'科研优势如何带来可持续 AI 商业化？']];
-const $=id=>document.getElementById(id);let selected=C[0],globe=null;const htmlEscape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));$('total').textContent=C.length;$('country-names').innerHTML=C.map(d=>'<option value="'+htmlEscape(d[2])+'"></option>').join('');$('focus').innerHTML=C.slice(0,5).map(d=>'<button class="pill" data-code="'+d[0]+'">'+d[2]+'</button>').join('');document.querySelectorAll('[data-code]').forEach(b=>b.addEventListener('click',()=>pick(C.find(d=>d[0]===b.dataset.code))));$('search').addEventListener('input',e=>{const x=e.target.value.trim().toLowerCase();const d=C.find(d=>d[2].toLowerCase()===x||d[3].toLowerCase()===x||d[0].toLowerCase()===x);if(d)pick(d)});function fmt(x,unit){return x==null?'—':Number(x).toLocaleString('zh-CN',{maximumFractionDigits:2})+(unit||'')};const indicators={gdp:'NY.GDP.MKTP.KD.ZG',inflation:'FP.CPI.TOTL.ZG',unemployment:'SL.UEM.TOTL.ZS',fdi:'BX.KLT.DINV.WD.GD.ZS',income:'NY.GDP.PCAP.CD'};let requestId=0;let cachedSnapshot=null;async function fetchWB(country,code){let value=null;try{const url='https://api.worldbank.org/v2/country/'+country+'/indicator/'+code+'?format=json&per_page=16';const r=await fetch(url);if(!r.ok)throw Error('World Bank '+r.status);const data=await r.json();value=(Array.isArray(data)&&Array.isArray(data[1])?data[1]:[]).find(x=>x.value!=null);if(value)return {value:value.value,year:value.date}}catch(e){}const key=Object.keys(indicators).find(k=>indicators[k]===code);return cachedSnapshot?.metrics?.[country]?.[key]||null}async function pick(d){if(!d)return;selected=d;$('selected-kpi').textContent=d[2];$('country').textContent=d[2];$('english').textContent=d[3];$('region').textContent=d[4];$('question').textContent=d[7];$('search').value=d[2];$('wbsource').href='https://data.worldbank.org/country/'+d[1].toLowerCase();document.querySelectorAll('[data-code]').forEach(b=>b.classList.toggle('active',b.dataset.code===d[0]));if(globe)try{globe.pointOfView({lat:d[5],lng:d[6],altitude:1.75},1000);globe.pointsData(C.map(c=>({lat:c[5],lng:c[6],data:c,selected:c[0]===d[0]})))}catch(_){};const id=++requestId;$('data-status').textContent='正在读取世界银行公开数据…';Object.keys(indicators).forEach(k=>{$(k).textContent='—';$(k+'-year').textContent=''});const states=await Promise.allSettled(Object.entries(indicators).map(async([key,code])=>({key,result:await fetchWB(d[1],code)})));if(id!==requestId)return;let good=0;for(let i=0;i<states.length;i++){const s=states[i];if(s.status!=='fulfilled'||!s.value.result)continue;good++;const key=s.value.key;$(key).textContent=fmt(s.value.result.value,key==='income'?'':'%');$(key+'-year').textContent=' · '+s.value.result.year+' 年';}$('data-status').textContent=good===5?'5 项指标已加载，数据年份见各项':good?'已加载 '+good+'/5 项，其余暂不可用':'数据查询失败或暂缺，请通过来源链接核实';}function initGlobe(){if(typeof Globe!=='function'){ $('fallback').style.display='block';$('globe-status').textContent='3D 资源不可达';return}try{globe=Globe()($('globe')).backgroundColor('rgba(0,0,0,0)').globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg').bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png').showAtmosphere(true).atmosphereColor('#78aaff').atmosphereAltitude(.14).pointsData(C.map(c=>({lat:c[5],lng:c[6],data:c,selected:c[0]==='US'}))).pointLat(p=>p.lat).pointLng(p=>p.lng).pointAltitude(p=>p.selected?.05:.012).pointRadius(p=>p.selected?.62:.32).pointColor(p=>p.selected?'#f7aa3b':'#5289ff').pointLabel(p=>p.data[2]).onPointClick(p=>pick(p.data));globe.controls().autoRotate=true;globe.controls().autoRotateSpeed=.35;globe.pointOfView({lat:22,lng:110,altitude:2.3},0);const resize=()=>globe.width($('globe').clientWidth).height($('globe').clientHeight);resize();window.addEventListener('resize',resize);$('globe-status').textContent='25 个经济体 · 可交互'}catch(e){$('fallback').style.display='block';$('globe-status').textContent='3D 初始化失败'}}window.addEventListener('load',initGlobe,{once:true});setTimeout(()=>{if(!globe)initGlobe()},3500);pick(C[0]);async function loadGitHub(){try{const date=new Date(Date.now()-30*864e5).toISOString().slice(0,10);const q=encodeURIComponent('topic:ai-agents created:>='+date);const r=await fetch('https://api.github.com/search/repositories?q='+q+'&sort=stars&order=desc&per_page=5',{headers:{Accept:'application/vnd.github+json'}});if(!r.ok)throw Error('HTTP '+r.status);const d=await r.json();$('github-kpi').textContent=Number(d.total_count).toLocaleString('zh-CN');$('github-feed').innerHTML=(d.items||[]).map(x=>'<a class="entry" target="_blank" rel="noopener" href="'+htmlEscape(x.html_url)+'"><b>'+htmlEscape(x.full_name)+'</b><small>★ '+(x.stargazers_count||0)+' · '+htmlEscape((x.description||'暂无介绍').slice(0,95))+'</small></a>').join('')||'近期没有匹配结果'}catch(e){$('github-feed').textContent='当前未能获取 GitHub 数据，可点击来源核实';$('github-kpi').textContent='不可用'}}async function loadHN(){try{const r=await fetch('https://hn.algolia.com/api/v1/search_by_date?tags=show_hn&query=AI&hitsPerPage=6');if(!r.ok)throw Error('HTTP '+r.status);const d=await r.json();$('hn-kpi').textContent=(d.hits||[]).length+' 条';$('hn-feed').innerHTML=(d.hits||[]).map(x=>'<a class="entry" target="_blank" rel="noopener" href="'+htmlEscape(x.url||'https://news.ycombinator.com/item?id='+x.objectID)+'"><b>'+htmlEscape(x.title||'新发布')+'</b><small>'+htmlEscape((x.created_at||'').slice(0,10))+' · '+(x.points||0)+' points · Show HN</small></a>').join('')||'暂无匹配结果'}catch(e){$('hn-feed').textContent='当前未能获取 Hacker News 数据，可点击来源核实';$('hn-kpi').textContent='不可用'}}async function loadCache(){try{const r=await fetch('data/snapshot.json',{cache:'no-store'});if(!r.ok)throw Error('No snapshot');cachedSnapshot=await r.json();let summary='最近一次自动采集：'+(cachedSnapshot.collected_at||'未知');const oa=cachedSnapshot.openalex;if(oa&&oa.matched_works!=null)summary+=' · OpenAlex 上月 AI 关键词匹配论文 '+Number(oa.matched_works).toLocaleString('zh-CN')+' 篇（非 AI 全部论文）';const ok=Object.values(cachedSnapshot.sources||{}).filter(x=>x?.ok).length;summary+=' · 成功采集 '+ok+' 个源项（失败项保持缺失）';$('snapshot-status').textContent=summary;pick(selected)}catch(e){$('snapshot-status').textContent='自动数据快照暂不可用；下方指标正在尝试直接查询公开接口。'}}loadCache();loadGitHub();loadHN();
-</script></body></html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="全球机会雷达：用一颗可交互的地球观察全球经济、AI技术与创业信号。25个经济体，公开数据，自动更新。">
+  <meta property="og:title" content="全球机会雷达 | 世界在变化，机会在哪里？">
+  <meta property="og:description" content="全球经济 × AI发展 × 创业信号。免费的开源全球研究网站。">
+  <meta property="og:type" content="website">
+  <title>全球机会雷达 — 世界在变化，机会在哪里？</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css?v=2.0">
+  <script defer src="app.js?v=2.0"></script>
+</head>
+<body>
+  <a class="skip" href="#globe-section">跳转到地球地图</a>
+  <header class="topbar">
+    <div class="nav container">
+      <a class="brand" href="#" aria-label="全球机会雷达首页">
+        <span class="brand-icon" aria-hidden="true"><span></span></span>
+        <span>Global<span class="brand-light">Radar</span></span><small>全球机会雷达</small>
+      </a>
+      <nav class="nav-links" aria-label="主导航">
+        <a href="#globe-section">全球地图</a><a href="#perspectives">四个市场</a><a href="#dashboard">经济数据</a><a href="#signals">AI 与创业</a>
+      </nav>
+      <a class="nav-github" href="https://github.com/AIPMAndy/global-opportunity-radar" target="_blank" rel="noopener noreferrer">GitHub 开源 <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+  <main>
+    <section class="hero container" id="top">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="live-dot"></span> GLOBAL INTELLIGENCE <span class="eyebrow-divider">/</span> OPEN SOURCE</div>
+        <h1>世界在变化。<br><span class="hero-gradient">机会在哪里？</span></h1>
+        <p class="hero-intro">同样是 2026 年，有些市场在加速创新，有些市场正在重新分配机会。把世界放在一颗地球上，观察经济、AI 和创业的真实信号。</p>
+        <div class="hero-actions"><a class="btn btn-primary" href="#globe-section">开始探索 <span>↗</span></a><a class="btn btn-outline" href="#how">了解数据方法</a></div>
+        <div class="hero-proof"><span><strong>25</strong> 个重点经济体</span><i></i><span><strong>4</strong> 类开放数据源</span><i></i><span><strong>6h</strong> 自动尝试更新</span></div>
+      </div>
+      <div class="hero-planet" aria-hidden="true">
+        <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+        <div class="planet-illustration"><div class="planet-lights"></div></div>
+        <span class="planet-note note-one"><b>AI</b> 技术跃迁</span><span class="planet-note note-two"><b>↗</b> 新增长市场</span>
+        <span class="hero-planet-caption">GLOBAL VIEW / 2026</span>
+      </div>
+    </section>
+    <section class="strip"><div class="container strip-inner"><span>观察世界 · 发现变化 · 验证机会</span><span class="strip-mid">THE WORLD IS STILL MOVING</span><a href="#globe-section">向下探索 <span>↓</span></a></div></section>
+
+    <section class="section container" id="globe-section">
+      <div class="section-heading"><div><div class="section-index">01 / EXPLORE THE WORLD</div><h2>打开地球，<br>看看世界正在发生什么。</h2></div><p>旋转、缩放、点击。<br>先选一个市场，再追踪它的变化。</p></div>
+      <div class="globe-layout">
+        <div class="earth-card">
+          <div class="earth-top"><span class="tiny-mark"><span class="live-dot"></span> INTERACTIVE EARTH</span><span id="earth-status">本地渲染 · 无需地图 CDN</span></div>
+          <div class="earth-stage" id="earth-stage">
+            <canvas id="earth" width="650" height="650" aria-label="全球经济体可旋转地图" role="img">交互地球，需要启用 JavaScript。</canvas>
+            <div class="earth-side-label">25 ECONOMIES <span>·</span> 6 CONTINENTS</div>
+            <div class="earth-tip">拖动旋转 · 滚轮缩放 · 点击光点</div>
+          </div>
+          <div class="earth-controls"><div class="focus-buttons" id="focus-buttons"><button type="button" data-country="USA" class="active">美国</button><button type="button" data-country="VNM">越南</button><button type="button" data-country="CHN">中国内地</button><button type="button" data-country="HKG">中国香港</button><button type="button" data-country="SGP">新加坡</button></div><button class="reset-earth" id="reset-earth" type="button" aria-label="重置地球视角">重置视角 ↺</button></div>
+        </div>
+        <aside class="place-card" aria-live="polite">
+          <div class="place-top"><span class="section-index">ECONOMY PROFILE</span><span class="profile-status" id="profile-status">公开数据</span></div>
+          <div class="select-row"><label for="country-search">选择经济体</label><input id="country-search" type="search" list="country-list" placeholder="搜索 25 个国家和地区" autocomplete="off"><datalist id="country-list"></datalist></div>
+          <div class="place-name"><span id="place-region">NORTH AMERICA</span><h3 id="place-title">美国</h3><p id="place-english">United States</p></div>
+          <div class="big-measure"><span>GDP 年增长率</span><div><strong id="metric-gdp">—</strong><small id="year-gdp">暂无统计</small></div></div>
+          <div class="measure-grid">
+            <div class="measure"><span>消费价格通胀</span><strong id="metric-inflation">—</strong><small id="year-inflation">暂无统计</small></div>
+            <div class="measure"><span>失业率</span><strong id="metric-unemployment">—</strong><small id="year-unemployment">暂无统计</small></div>
+            <div class="measure"><span>外资净流入 / GDP</span><strong id="metric-fdi">—</strong><small id="year-fdi">暂无统计</small></div>
+            <div class="measure"><span>人均 GDP · 美元</span><strong id="metric-income">—</strong><small id="year-income">暂无统计</small></div>
+          </div>
+          <div class="research-question"><span class="research-overline">值得研究的问题</span><p id="place-question">AI 研发投入如何转化为企业客户的真实采购预算？</p></div>
+          <div class="place-footer"><a id="worldbank-link" href="https://data.worldbank.org/" target="_blank" rel="noopener noreferrer">查看原始经济数据 ↗</a><span>World Bank · WDI</span></div>
+        </aside>
+      </div>
+      <div class="data-line"><span id="refresh-state">正在检查最近一次数据快照…</span><a href="https://data.worldbank.org/" target="_blank" rel="noopener noreferrer">数据来源和统计口径 ↗</a></div>
+    </section>
+
+    <section class="section section-soft" id="perspectives"><div class="container">
+      <div class="section-heading"><div><div class="section-index">02 / FOUR DIFFERENT MARKETS</div><h2>同一个世界，<br><span class="muted-title">四种不同的增长逻辑。</span></h2></div><p>从技术中心到制造增长，从成熟市场到跨境枢纽。观察不同，不代表给它们简单打分。</p></div>
+      <div class="region-grid">
+        <button type="button" class="region-card region-us" data-country="USA"><span class="region-head"><span>01 / UNITED STATES</span><span>↗</span></span><span class="region-emblem">✳</span><strong>美国</strong><em>AI 创新与技术商业化</em><span class="region-body">研究模型、算力、芯片设计与企业软件的投入，最终由谁付费。</span><span class="region-link">查看美国指标 →</span></button>
+        <button type="button" class="region-card region-vn" data-country="VNM"><span class="region-head"><span>02 / VIETNAM</span><span>↗</span></span><span class="region-emblem">↗</span><strong>越南</strong><em>产业链迁移与本地消费</em><span class="region-body">跟踪制造业、外商投资和年轻消费者，辨别增长如何传导给小企业。</span><span class="region-link">查看越南指标 →</span></button>
+        <button type="button" class="region-card region-cn" data-country="CHN"><span class="region-head"><span>03 / MAINLAND CHINA</span><span>↗</span></span><span class="region-emblem">◎</span><strong>中国内地</strong><em>效率竞争与商业模式重构</em><span class="region-body">当获客成本和客户预算发生变化，哪些更具体的 AI 服务仍有购买理由。</span><span class="region-link">查看中国内地指标 →</span></button>
+        <button type="button" class="region-card region-hk" data-country="HKG"><span class="region-head"><span>04 / HONG KONG SAR</span><span>↗</span></span><span class="region-emblem">⇄</span><strong>中国香港</strong><em>国际连接与专业服务</em><span class="region-body">观察跨境交易、融资与专业服务需求，寻找连接不同市场的切入点。</span><span class="region-link">查看中国香港指标 →</span></button>
+      </div>
+    </div></section>
+
+    <section class="section container" id="dashboard">
+      <div class="section-heading"><div><div class="section-index">03 / ECONOMIC INDICATORS</div><h2>用数据对比，<br>让直觉接受检验。</h2></div><p>统计年份不同，不能把经济增长率误读成今天的实时景气度。</p></div>
+      <div class="comparison"><div class="comparison-top"><div><h3>重点市场比较</h3><p>GDP 增长率、通胀、失业率与人均 GDP</p></div><span>WORLD BANK · LATEST AVAILABLE YEAR</span></div><div class="table-scroll"><table><thead><tr><th>经济体</th><th>GDP 增长率</th><th>通胀率</th><th>失业率</th><th>人均 GDP</th><th>数据时间</th></tr></thead><tbody id="compare-body"><tr><td colspan="6" class="empty-cell">正在读取公开数据…</td></tr></tbody></table></div><div class="comparison-bottom"><span>— 代表暂缺数据，不代表 0</span><span>点击经济体行可回到地球</span></div></div>
+    </section>
+
+    <section class="section section-night" id="signals"><div class="container">
+      <div class="section-heading light-heading"><div><div class="section-index">04 / AI & STARTUP SIGNALS</div><h2>技术正在前进。<br><span>创业正在发生。</span></h2></div><p>把科研、开源活跃度与产品发布分开观察。每条信号都能回到原始来源。</p></div>
+      <div class="signal-stats"><div><span>AI 论文关键词匹配</span><strong id="openalex-count">—</strong><small id="openalex-period">OpenAlex · 上一自然月</small></div><div><span>AI Agents 新仓库检索</span><strong id="github-count">—</strong><small>GitHub · 最近 30 日</small></div><div><span>社区产品发布</span><strong id="hn-count">—</strong><small>Hacker News · 最新检索结果</small></div></div>
+      <div class="signal-board"><div class="signal-column"><div class="signal-column-head"><span><i class="blue-dot"></i> OPEN SOURCE</span><h3>最新 AI 开源项目</h3><p>来自 GitHub 的公开仓库，按最近窗口检索。</p></div><div id="github-feed" class="feed-items"><div class="feed-empty">正在读取开源项目…</div></div><a href="https://github.com/topics/ai-agents" target="_blank" rel="noopener noreferrer" class="signal-source">前往 GitHub 继续探索 ↗</a></div><div class="signal-column"><div class="signal-column-head"><span><i class="purple-dot"></i> BUILD IN PUBLIC</span><h3>正在发布的新产品</h3><p>来自 Hacker News 的 Show HN，观察创业者在做什么。</p></div><div id="hn-feed" class="feed-items"><div class="feed-empty">正在读取产品发布…</div></div><a href="https://news.ycombinator.com/show" target="_blank" rel="noopener noreferrer" class="signal-source">前往 Hacker News ↗</a></div></div>
+      <div class="signal-disclaimer">科研论文量、Star 数与产品发布量是不同维度的活动信号，不能直接代表融资、营收或技术突破。</div>
+    </div></section>
+
+    <section class="section container method-section" id="how"><div class="section-heading"><div><div class="section-index">05 / HOW WE THINK</div><h2>看见信号之后，<br>继续追问三个问题。</h2></div><p>一份给所有创业者的开源研究清单。</p></div>
+      <div class="method-grid"><article><span class="method-number">01</span><h3>哪里正在增长？</h3><p>从 GDP、通胀、投资与就业出发，判断市场所处周期，再深入到具体行业。</p><span>ECONOMY</span></article><article><span class="method-number">02</span><h3>什么能力正在贬值？</h3><p>看 AI 研究、开源项目与新产品的迭代，识别被自动化的旧流程和新需求。</p><span>TECHNOLOGY</span></article><article><span class="method-number">03</span><h3>谁愿意持续付费？</h3><p>把市场观察落到客户、预算、采购决策与交付成本，用真实交易继续验证。</p><span>BUSINESS</span></article></div>
+    </section>
+    <section class="closing"><div class="container closing-inner"><span class="section-index">KEEP EXPLORING</span><h2>别只看自己所在的市场。</h2><p>世界仍有人在增长、有人在创新、有人在赚钱。<br>保持好奇，打开地图，看看下一步在哪里。</p><div><a class="btn btn-primary" href="#globe-section">继续探索世界 ↗</a><a class="btn btn-outline" href="https://github.com/AIPMAndy/global-opportunity-radar" target="_blank" rel="noopener noreferrer">参与开源项目 ↗</a></div></div></section>
+  </main>
+  <footer><div class="container footer-inner"><div><span class="footer-brand">◉ GlobalRadar</span><p>由 AI 酋长 Andy 发起 · 开源全球经济与技术观察</p></div><div class="footer-right"><a href="https://github.com/AIPMAndy/global-opportunity-radar" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://data.worldbank.org/" target="_blank" rel="noopener noreferrer">World Bank</a><a href="https://openalex.org/" target="_blank" rel="noopener noreferrer">OpenAlex</a><span>© 2026 Global Opportunity Radar</span></div></div></footer>
+</body>
+</html>
