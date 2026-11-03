@@ -160,6 +160,7 @@ class CanvasGlobe {
  }
 }
 let globe,heroGlobe;
+window.RadarCore={countries:C.map(c=>({code:c[0],name:c[1],english:c[2],region:c[3],question:c[6]})),selectCountry:(code,scroll)=>selectCountry(code,Boolean(scroll))};
 function metricEntry(code,key){const value=snapshot?.metrics?.[code]?.[key];return value&&value.value!==null?value:null}
 function showMetrics(code){
  let found=0;for(const key of Object.keys(LABELS)){const d=metricEntry(code,key);if(d)found++;$( "metric-"+key).textContent=d?format(d.value,key==="income"?"":"%"):"—";$( "year-"+key).textContent=d?String(d.year)+" 年":"暂无统计"}
@@ -172,6 +173,7 @@ function selectCountry(code,scroll){
  $("worldbank-link").href="https://api.worldbank.org/v2/country/"+c[0]+"/indicator/NY.GDP.MKTP.KD.ZG?format=json";
  document.querySelectorAll("[data-country]").forEach(b=>b.classList.toggle("active",b.dataset.country===code));
  showMetrics(code);if(globe)globe.lookAt(c);if(heroGlobe)heroGlobe.lookAt(c);renderComparison();
+ window.dispatchEvent(new CustomEvent("radar:select",{detail:{code}}));
  if(scroll)document.querySelector("#globe-section").scrollIntoView({behavior:"smooth",block:"start"});
  if(!snapshot||!Object.keys(snapshot.metrics?.[code]||{}).length)loadCountryOnDemand(code);
 }
@@ -200,6 +202,7 @@ async function loadCountryOnDemand(code){
  outputs.forEach(r=>{if(r.status==="fulfilled"&&r.value.value)snapshot.metrics[code][r.value.key]=r.value.value});
  if(serial===requestSerial&&selected[0]===code)showMetrics(code);
  renderComparison();
+ window.dispatchEvent(new CustomEvent("radar:data",{detail:{snapshot}}));
 }
 function buildSignalItems(el,items,type){
  el.textContent="";
@@ -245,6 +248,7 @@ async function start(){
   const count=Object.values(snapshot.sources||{}).filter(x=>x&&x.ok).length;
   $("refresh-state").textContent=data.collected_at?"最近抓取 "+new Date(data.collected_at).toLocaleString("zh-CN")+" · "+count+" 类采集项成功 · 指标以各自统计年为准":"等待首次采集 · 指标可尝试直接从世界银行查询";
  }catch(e){snapshot={metrics:{},sources:{}};$("refresh-state").textContent="自动采集快照暂不可用，正在尝试直接查询公开接口。"}
+ window.dispatchEvent(new CustomEvent("radar:data",{detail:{snapshot}}));
  selectCountry("USA",false);renderSignals();fallbackSignals();
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start);else start();
