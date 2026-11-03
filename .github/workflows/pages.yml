@@ -1,7 +1,9 @@
-name: Publish Global Opportunity Radar
+name: Refresh Data and Publish Global Opportunity Radar
 on:
   push:
     branches: [main]
+  schedule:
+    - cron: '17 */6 * * *'
   workflow_dispatch:
 permissions:
   contents: read
@@ -19,6 +21,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Collect open data (without failing on unavailable providers)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENALEX_API_KEY: ${{ secrets.OPENALEX_API_KEY }}
+        run: python scripts/collect.py
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload static site
