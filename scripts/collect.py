@@ -27,7 +27,7 @@ INDICATORS = {
 }
 NOW = datetime.now(timezone.utc)
 TIMEOUT = float(os.environ.get("RADAR_HTTP_TIMEOUT", "12"))
-USER_AGENT = "GlobalOpportunityRadar/2.0 (open-source dashboard)"
+USER_AGENT = "GlobalOpportunityRadar/2.1 (open-source dashboard)"
 
 def get_json(url: str, token: str | None = None) -> object:
     headers = {"User-Agent": USER_AGENT, "Accept": "application/json"}
@@ -40,8 +40,8 @@ def get_json(url: str, token: str | None = None) -> object:
 def build_tasks() -> dict[str, tuple[str, str | None, str]]:
     tasks = {}
     country_codes = ";".join(COUNTRIES)
-    start = max(2021, NOW.year - 5)
     for key, indicator in INDICATORS.items():
+        start = max(2000, NOW.year - (10 if key == "gdp" else 5))
         url = ("https://api.worldbank.org/v2/country/" + country_codes +
                "/indicator/" + indicator + "?format=json&date=" +
                str(start) + ":" + str(NOW.year) + "&per_page=1000")
@@ -75,6 +75,7 @@ def main() -> None:
         "countries": COUNTRIES,
         "indicators": INDICATORS,
         "metrics": {code: {} for code in COUNTRIES},
+        "history": {code: [] for code in COUNTRIES},
         "sources": {},
         "github": None,
         "hackernews": None,
@@ -104,6 +105,10 @@ def main() -> None:
                         if code not in out["metrics"] or value is None:
                             continue
                         date = str(row.get("date", ""))
+                        if key == "gdp" and date.isdecimal():
+                            out["history"][code].append({
+                                "year": int(date), "value": value
+                            })
                         previous = out["metrics"][code].get(key)
                         if not previous or date > str(previous["year"]):
                             out["metrics"][code][key] = {
@@ -147,6 +152,14 @@ def main() -> None:
                 out["sources"][name] = {
                     "ok": False, "url": public_url, "error": str(exc)[:160]
                 }
+    for code, points in out["history"].items():
+        # Store each actual observation once; never interpolate missing years.
+        unique = {point["year"]: point for point in points}
+        out["history"][code] = [unique[year] for year in sorted(unique)]
+    out["coverage"] = {
+        key: sum(key in metrics for metrics in out["metrics"].values())
+        for key in INDICATORS
+    }
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text(json.dumps(out, ensure_ascii=False, indent=2) + "\n",
                       encoding="utf-8")
