@@ -17,6 +17,7 @@ import os
 
 ROOT = Path(__file__).resolve().parent.parent
 OUTPUT = ROOT / "data" / "snapshot.json"
+CACHE = ROOT / "data" / "last-success.json"
 COUNTRIES = "USA VNM CHN HKG SGP TWN JPN KOR IND IDN MYS THA PHL AUS NZL DEU GBR FRA NLD CHE ARE SAU BRA MEX CAN".split()
 INDICATORS = {
     "gdp": "NY.GDP.MKTP.KD.ZG",
@@ -69,6 +70,12 @@ def build_tasks() -> dict[str, tuple[str, str | None, str]]:
     return tasks
 
 def main() -> None:
+    try:
+        previous = json.loads(CACHE.read_text(encoding="utf-8")) if CACHE.is_file() else {}
+        if not isinstance(previous, dict):
+            previous = {}
+    except (ValueError, OSError):
+        previous = {}
     out = {
         "schema": 2,
         "collected_at": NOW.isoformat().replace("+00:00", "Z"),
@@ -76,6 +83,7 @@ def main() -> None:
         "indicators": INDICATORS,
         "metrics": {code: {} for code in COUNTRIES},
         "history": {code: [] for code in COUNTRIES},
+        "cache": {"restored_sources": [], "previous_snapshot_at": previous.get("collected_at")},
         "sources": {},
         "github": None,
         "hackernews": None,
@@ -152,6 +160,34 @@ def main() -> None:
                 out["sources"][name] = {
                     "ok": False, "url": public_url, "error": str(exc)[:160]
                 }
+    # Preserve the last successful observation only when a whole source fails.
+    # A source that succeeds but reports a missing value stays missing.
+    for name, (_, _, kind) in tasks.items():
+        if out["sources"].get(name, {}).get("ok") or not previous:
+            continue
+        previous_sources = previous.get("sources") or {}
+        if name not in previous_sources:
+            continue
+        if kind == "worldbank":
+            key = name.removeprefix("worldbank_")
+            for code in COUNTRIES:
+                old = (previous.get("metrics") or {}).get(code, {}).get(key)
+                if isinstance(old, dict) and old.get("value") is not None:
+                    out["metrics"][code][key] = old
+            if key == "gdp":
+                for code in COUNTRIES:
+                    prior_points = (previous.get("history") or {}).get(code, [])
+                    if isinstance(prior_points, list):
+                        out["history"][code] = prior_points[:]
+        elif kind in ("github", "hackernews", "openalex"):
+            old = previous.get(kind)
+            if old is not None:
+                out[kind] = old
+        source = out["sources"][name]
+        source["cached"] = True
+        source["cached_from"] = previous_sources.get(name, {}).get("cached_from") or previous.get("collected_at")
+        out["cache"]["restored_sources"].append(name)
+
     for code, points in out["history"].items():
         # Store each actual observation once; never interpolate missing years.
         unique = {point["year"]: point for point in points}
