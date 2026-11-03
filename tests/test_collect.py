@@ -41,7 +41,7 @@ class CollectionTests(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as temp:
             output = Path(temp) / "snapshot.json"
-            with patch.object(collect, "get_json", side_effect=fake_json), patch.object(collect, "OUTPUT", output):
+            with patch.object(collect, "get_json", side_effect=fake_json), patch.object(collect, "OUTPUT", output), patch.object(collect, "CACHE", Path(temp) / "absent.json"):
                 collect.main()
             data = json.loads(output.read_text(encoding="utf-8"))
         self.assertEqual(data["schema"], 2)
@@ -56,13 +56,34 @@ class CollectionTests(unittest.TestCase):
     def test_all_providers_failed_still_produces_transparent_snapshot(self):
         with tempfile.TemporaryDirectory() as temp:
             output = Path(temp) / "snapshot.json"
-            with patch.object(collect, "get_json", side_effect=RuntimeError("unavailable")), patch.object(collect, "OUTPUT", output):
+            with patch.object(collect, "get_json", side_effect=RuntimeError("unavailable")), patch.object(collect, "OUTPUT", output), patch.object(collect, "CACHE", Path(temp) / "absent.json"):
                 collect.main()
             data = json.loads(output.read_text(encoding="utf-8"))
         self.assertEqual(data["coverage"]["gdp"], 0)
         self.assertEqual(data["history"]["USA"], [])
         self.assertEqual(len(data["sources"]), 8)
         self.assertTrue(all(not x["ok"] for x in data["sources"].values()))
+
+    def test_cache_restores_only_failed_source_with_source_flag(self):
+        year = str(collect.NOW.year - 1)
+        with tempfile.TemporaryDirectory() as temp:
+            cache = Path(temp) / "last-success.json"
+            cache.write_text(json.dumps({
+                "collected_at": "2026-10-01T00:00:00Z",
+                "metrics": {"USA": {"gdp": {"year": year, "value": 2.3, "indicator": collect.INDICATORS["gdp"]}}},
+                "history": {"USA": [{"year": int(year), "value": 2.3}]},
+                "sources": {"worldbank_gdp": {"ok": True, "url": "https://api.worldbank.org/"}}
+            }), encoding="utf-8")
+            output = Path(temp) / "snapshot.json"
+            with patch.object(collect, "get_json", side_effect=RuntimeError("offline")), patch.object(collect, "OUTPUT", output), patch.object(collect, "CACHE", cache):
+                collect.main()
+            data = json.loads(output.read_text(encoding="utf-8"))
+        self.assertEqual(data["metrics"]["USA"]["gdp"]["value"], 2.3)
+        self.assertEqual(data["history"]["USA"][0]["year"], int(year))
+        self.assertFalse(data["sources"]["worldbank_gdp"]["ok"])
+        self.assertTrue(data["sources"]["worldbank_gdp"]["cached"])
+        self.assertEqual(data["sources"]["worldbank_gdp"]["cached_from"], "2026-10-01T00:00:00Z")
+        self.assertEqual(data["coverage"]["gdp"], 1)
 
 
 if __name__ == "__main__":
