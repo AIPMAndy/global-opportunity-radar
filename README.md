@@ -1,65 +1,83 @@
 # 🌍 全球机会雷达 · Global Opportunity Radar
 
-**世界一直在变化。机会在哪里？**
+> **世界在变化。机会在哪里？**
+>
+> 用一颗可以交互的地球，持续观察全球经济、AI 技术与创业产品的变化。
 
-由 [AI 酋长 Andy](https://github.com/AIPMAndy) 发起的免费开源全球经济、AI 技术及创业信号观察平台。
+[**在线打开网站**](https://aipmandy.github.io/global-opportunity-radar/) · [**查看部署状态**](https://github.com/AIPMAndy/global-opportunity-radar/actions) · [**数据方法**](docs/DATA_SOURCES.md) · [**保姆级部署**](docs/DEPLOY.md)
 
-## 在线体验
+由 [AI 酋长 Andy](https://github.com/AIPMAndy) 发起的免费开源研究项目。适合创业者、AI 产品经理、独立开发者和想对比不同市场的人。
 
-**GitHub Pages（配置成功后）：** https://aipmandy.github.io/global-opportunity-radar/
+## 为什么做？
 
-> 当前在线仓库版本：**V1 核心交互版**。已提交可运行的单页 3D 地球网站和 GitHub Pages 自动部署工作流；已增加 Python 标准库采集器与每六小时定时重新构建；网页优先尝试公开接口，接口失败时使用最近成功采集的缓存指标。数据抓取频率不等于宏观指标发布频率。
+同样是 2026 年，不同地方的经济与创业感受可能完全不同：硅谷关注 AI 产品化，越南关注产业链变化，中国内地越来越重视投入产出，香港连接不同市场的业务机会。个人观察可以提出问题，最终还需要核对数据、技术进展和真实客户。
 
-### 已支持
+项目追踪三层信息：
 
-- 25 个重点经济体的三维地球定位、拖动、缩放、点击交互；3D 资源不可达时可用地区按钮。
-- 按经济体查询世界银行公开指标：GDP 增长率、通胀、失业、FDI 净流入、人均 GDP。
-- 打开网页时查询 GitHub 近 30 日新增 AI agents 仓库、Hacker News 近期 Show HN 中包含 AI 的投稿。
-- GitHub Actions 每六小时尝试采集世界银行、GitHub、Hacker News 和 OpenAlex 关键词数据，生成部署用 JSON 快照；部分来源失败时保留空值和失败记录。
-- 每项宏观指标展示统计年份；接口失败或没有数据时显示空值，不编造实时数值。
-- 苹果风浅色界面、移动端布局、源站跳转。
-- GitHub Actions 自动**更新数据并发布网站**：每次向 main 推送及每六小时定时尝试运行。
+1. **全球经济**：市场周期、GDP 增长、通胀、失业、外资流入、人均 GDP。
+2. **AI 发展**：开源生态的新项目、OpenAlex 论文关键词匹配记录。
+3. **创业动态**：Hacker News 新产品发布、值得进一步验证的商业场景。
 
-### 暂不包含
+## V2.0 功能
 
-- 完整的各经济体 AI 科研产出对比（目前只提供 OpenAlex 上月 AI 关键词匹配数，且接口可能暂时不可用）。
-- 长期历史时间序列及人工核实的全球融资、招聘和创业事件库。
-- VC 融资额、创业公司收入、公司“赚钱指数”。
-- 官方意义上的实时 GDP、实时就业与跨国营商难易度排名。
+- **可交互的 3D 风格地球**：拖动旋转、滚轮缩放、点击光点、键盘方向键；完全本地 Canvas 绘制，**不依赖第三方地图 CDN**。
+- **25 个重点经济体**：美国、越南、中国内地、中国香港、新加坡等，支持搜索、选择和指标对比。
+- **经济指标卡**：五项世界银行公开指标，标注统计年份，缺失数据保留「—」。
+- **四个市场研究切面**：AI 创新、产业链迁移、效率竞争、国际连接。
+- **AI 与创业信号**：GitHub 最近 30 天 AI agents 主题仓库、OpenAlex 关键词匹配、Hacker News Show HN。
+- **苹果风格页面**：白色底、渐变光感、大字号、深色数据模块、完整手机适配。
+- **自动采集与部署**：GitHub Actions 每六小时尝试刷新公开数据；采集失败不阻止网站发布。
+- **零 npm 依赖**：纯 HTML + CSS + JavaScript，Python 只用标准库。
 
-## 保姆级部署
+## 保姆级部署（Fork 版本）
 
-1. 进入仓库 [Settings → Pages](https://github.com/AIPMAndy/global-opportunity-radar/settings/pages)。
-2. 在 **Build and deployment** 的 **Source** 中选择 **GitHub Actions**。
-3. 打开 [Actions](https://github.com/AIPMAndy/global-opportunity-radar/actions)，选择 **Refresh Data and Publish Global Opportunity Radar** → **Run workflow** → 选择 `main` 并运行。如果已经有成功的部署，则不必重复运行。
-4. 在 [Pages 设置](https://github.com/AIPMAndy/global-opportunity-radar/settings/pages) 查看正式访问 URL。通常为 https://aipmandy.github.io/global-opportunity-radar/ ，以 GitHub 显示的地址为准。
+1. 点击 GitHub 页面右上角 **Fork**，将本仓库复制到自己的账号。
+2. 进入 **Settings → Pages**，在 **Build and deployment → Source** 选择 **GitHub Actions**。
+3. 打开 **Actions → Build and Publish Global Opportunity Radar → Run workflow**，选择主分支，手动运行。
+4. 等到 **Deploy to GitHub Pages** 显示绿色成功。Pages 设置会显示正式网站地址。
 
-## 技术栈
+完整说明：[docs/DEPLOY.md](docs/DEPLOY.md)。
 
-- 前端：静态 HTML / CSS / JavaScript，无 npm 安装要求。
-- 地球：globe.gl，通过 jsDelivr 加载。贴图通过第三方地址加载；离线或 CDN 不可用时保留地区和数据面板。
-- 数据：世界银行 WDI、GitHub REST 搜索、Hacker News Algolia、OpenAlex 关键词检索。
-- 自动采集：Python 标准库脚本 `scripts/collect.py`；定时任务 UTC 每六小时第 17 分钟运行；生成 `data/snapshot.json`，只打包到 Pages 部署产物（不自动提交到 main）。
-- 托管：GitHub Pages；工作流位于 `.github/workflows/pages.yml`。
+## 源码结构
 
-页面在浏览器中查询公开接口，并使用已部署的数据快照作为回退。接口可能受 CORS、网络、配额限制；OpenAlex 可能要求 API Key，可在仓库的 Actions secrets 中按需设置 `OPENALEX_API_KEY`。缺失值不能当成零，缓存数值应结合标注年份理解。
+- **index.html** — 页面内容及结构
+- **styles.css** — 视觉系统、响应式布局
+- **app.js** — Canvas 地球、地图交互、经济对比、数据展示
+- **favicon.svg** — 网站标志
+- **data/world.json** — 与网站一同部署的海岸线数据
+- **data/snapshot.json** — 未采集状态的原始空值快照，部署时由采集器更新
+- **scripts/collect.py** — 并发采集的 Python 标准库脚本
+- **.github/workflows/pages.yml** — GitHub Pages 自动更新与发布
+- **docs/DEPLOY.md** — 从零部署与打不开排查
+- **docs/DATA_SOURCES.md** — 指标口径、来源与方法
 
-## 判断创业机会的方法
+## 数据来源
 
-| 跨地区观察 | 需要核实的证据 |
-| --- | --- |
-| 美国 AI 创业活跃 | 是否有企业持续付费、可复用交付、成本优势？ |
-| 越南制造与本地消费 | 外资流入究竟进入哪些行业、本地商户是否有预算？ |
-| 中国内地流量竞争 | 哪些场景付费需求仍然稳定、客户的 ROI 是否成立？ |
-| 香港跨境连接 | 贸易及专业服务需求是否能形成可重复交易？ |
+| 来源 | 数据 | 周期 | 使用时要知道 |
+| --- | --- | --- | --- |
+| [世界银行 WDI](https://data.worldbank.org/) | GDP、通胀、失业、FDI、人均 GDP | 通常每年 | 每项显示统计年份，非实时 GDP |
+| [OpenAlex](https://openalex.org/) | AI 关键词匹配的论文记录 | 上一自然月 | 不等于全球全部 AI 论文 |
+| [GitHub Search](https://github.com/topics/ai-agents) | 新建 ai-agents 主题仓库 | 最近 30 天 | 不等于 AI 公司数量 |
+| [Hacker News](https://news.ycombinator.com/show) | 含 AI 的 Show HN 发布 | 最新检索 | 不等于融资或营收 |
 
-城市体验属于观察线索，GDP 属于宏观数据，创业成功需要真实付费和单位经济模型证据，三者不能直接画等号。
+**重要区别**：每六小时是程序抓取频率，非宏观经济指标发布频率。每条数值应结合来源和统计年份理解。抓取异常不会被写成 0。
 
-## 数据诚信
+## 技术架构
 
-- 宏观指标通常按年度发布，新抓取时间不等于指标统计期。
-- GitHub 搜索结果只是符合检索条件的公开仓库，不等于 AI 公司数量。
-- Show HN 的社区投稿不等于融资、营收和商业成功。
-- 仅供学习与研究，不构成投资建议或收益承诺。
+前端使用静态 HTML、CSS 和 Canvas。世界地图资源跟随仓库一起发布，不需要请求第三方 3D 库。Python 采集器并发访问四类公开 API，生成 JSON 快照。GitHub Actions 将生产文件复制到独立的 _site 目录并部署。
 
-MIT License。欢迎提交 Issue、PR 和新增可核实的数据源。
+默认不需要申请密钥。GitHub Actions 自带的令牌可以访问公开 GitHub 搜索接口。若 OpenAlex 需要 API Key，可以在仓库 **Settings → Secrets and variables → Actions** 创建名为 OPENALEX_API_KEY 的 Secret；其他来源可以继续运行。
+
+## 未来版本
+
+1. 历史年份曲线、更多自定义国家对比。
+2. 区分 AI 科研、开源、企业落地和招聘信号。
+3. 具有原始链接、发布日期和事实口径的全球融资事件库。
+4. 行业机会档案：谁有痛点、谁来付钱、验证结果如何。
+5. 中英文市场研究摘要和定期报告。
+
+欢迎提交 Issue、PR 或新的公开数据源。
+
+## 作者与许可
+
+由 [AI 酋长 Andy](https://github.com/AIPMAndy) 发起，代码使用 [MIT License](LICENSE)。世界地图轮廓来源信息见 [数据说明](docs/DATA_SOURCES.md)。
