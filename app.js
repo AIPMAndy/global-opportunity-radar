@@ -55,11 +55,12 @@ class CanvasGlobe {
  constructor(canvas,onSelect) {
   this.canvas=canvas;this.ctx=canvas.getContext("2d",{alpha:true});
   this.onSelect=onSelect;this.lon=101;this.lat=22;this.zoom=1;this.paths=LAND_FALLBACK;
-  this.drag=null;this.lastInput=0;this.active=true;this.lastTick=0;this.lastFrame=0;this.visiblePoints=[];
+  this.drag=null;this.lastInput=0;this.active=true;this.visible=true;this.lastTick=0;this.lastFrame=0;this.visiblePoints=[];
   this.canvas.setAttribute("tabindex","0");
   this.canvas.setAttribute("aria-label","可交互地球。使用左右方向键旋转，拖拽或点击国家光点进行选择。");
   this.install();
   this.resize();
+  if("IntersectionObserver" in window)new IntersectionObserver(entries=>{this.visible=entries[0]?.isIntersecting??true}).observe(this.canvas);
   if("ResizeObserver" in window)new ResizeObserver(()=>this.resize()).observe(this.canvas);
   else window.addEventListener("resize",()=>this.resize());
   requestAnimationFrame(t=>this.loop(t));
@@ -151,6 +152,7 @@ class CanvasGlobe {
   }
  }
  loop(t){
+  if(document.hidden||!this.visible){this.lastTick=t;this.lastFrame=t;requestAnimationFrame(now=>this.loop(now));return}
   if(!this.lastFrame||t-this.lastFrame>48){
    if(!this.lastTick)this.lastTick=t;
    if(!this.drag&&t-this.lastInput>5500&&!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches))this.lon+=(t-this.lastTick)*.00125;
@@ -169,7 +171,9 @@ function showMetrics(code){
 let selecting=false;
 function selectCountry(code,scroll){
  const c=countriesByCode[code];if(!c)return;
- selected=c;$("place-region").textContent=c[3];$("place-title").textContent=c[1];$("place-english").textContent=c[2];$("place-question").textContent=c[6];$("country-search").value=c[1];
+ selected=c;
+ try {const url=new URL(window.location.href);url.searchParams.set("economy",code);window.history.replaceState(null,"",url.pathname+url.search+url.hash)} catch(_) {}
+ $("place-region").textContent=c[3];$("place-title").textContent=c[1];$("place-english").textContent=c[2];$("place-question").textContent=c[6];$("country-search").value=c[1];
  $("worldbank-link").href="https://api.worldbank.org/v2/country/"+c[0]+"/indicator/NY.GDP.MKTP.KD.ZG?format=json";
  document.querySelectorAll("[data-country]").forEach(b=>b.classList.toggle("active",b.dataset.country===code));
  showMetrics(code);if(globe)globe.lookAt(c);if(heroGlobe)heroGlobe.lookAt(c);renderComparison();
@@ -249,7 +253,8 @@ async function start(){
   $("refresh-state").textContent=data.collected_at?"最近抓取 "+new Date(data.collected_at).toLocaleString("zh-CN")+" · "+count+" 类采集项成功 · 指标以各自统计年为准":"等待首次采集 · 指标可尝试直接从世界银行查询";
  }catch(e){snapshot={metrics:{},sources:{}};$("refresh-state").textContent="自动采集快照暂不可用，正在尝试直接查询公开接口。"}
  window.dispatchEvent(new CustomEvent("radar:data",{detail:{snapshot}}));
- selectCountry("USA",false);renderSignals();fallbackSignals();
+ const fromLink=new URLSearchParams(window.location.search).get("economy");
+ selectCountry(countriesByCode[fromLink]?fromLink:"USA",false);renderSignals();fallbackSignals();
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start);else start();
 })();
